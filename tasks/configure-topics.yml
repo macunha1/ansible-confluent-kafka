@@ -1,0 +1,21 @@
+- name: Calculate replication-factor and partitions
+  set_fact:
+    kafka_params:
+      - "--replication-factor {{ groups['kafka'] | length | root | int }} "
+      - "--partitions {{ groups['kafka'] | length }} "
+  tags:
+    - create
+
+- name: Append config var if there's a parameter
+  set_fact:
+    kafka_params: "{{ kafka_params + ['--config {{ param_config }}'] }}"
+  when: param_config is defined and param_config
+  tags:
+    - create
+
+- name: Create a new partitioned topic on Kafka
+  command: "{{ kafka_bins }}/kafka-topics --zookeeper localhost:2181 --create {% for parameter in kafka_params %}{{ parameter }}{%endfor%} --topic {{ item }} "
+  run_once: true
+  with_items: "{{ topics }}"
+  tags:
+    - create

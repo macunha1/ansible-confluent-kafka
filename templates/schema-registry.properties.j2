@@ -1,0 +1,14 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Config file automatic generated using zookeeper template from Ansible
+
+listeners={{ listeners_schema }}
+kafkastore.connection.url={{ zookeeper.get('connect') }}
+kafkastore.topic={{ kafkastore_topic }}
+debug={{ debug }}

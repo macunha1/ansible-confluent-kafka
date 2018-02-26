@@ -1,0 +1,19 @@
+[Unit]
+Description="{{ item.value.file_name }}"
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ initscripts_path }}/{{ item.value.file_name }} start
+ExecStop={{ initscripts_path }}/{{ item.value.file_name }} stop
+ExecReload=/bin/kill -HUP $MAINPID
+# TimeoutStartSec=600
+KillMode=process
+Restart=on-failure
+RestartSec=120
+RestartPreventExitStatus=255
+StartLimitBurst=0
+
+[Install]
+WantedBy=multi-user.target
+Alias={{ item.value.file_name }}.service

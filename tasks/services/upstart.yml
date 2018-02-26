@@ -1,0 +1,16 @@
+- name: Create Init script for services
+  file:
+    src: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    dest: "/etc/init.d/{{ item.value.file_name }}"
+    owner: "{{ item.value.user }}"
+    state: link
+    force: yes
+  with_dict: "{{ services }}"
+  when: initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
+
+- name: Start and enable SysV scripts
+  service:
+    name: "{{ item.value.file_name }}"
+    enabled: yes
+    state: started
+  with_dict: "{{ services }}"

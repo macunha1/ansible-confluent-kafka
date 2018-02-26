@@ -1,0 +1,160 @@
+---
+
+- name: Create necessary users and groups
+  import_tasks: groups.yml
+  vars:
+    confluent_services: "{{ services.keys() | list }}"
+  tags:
+    - groups
+
+- name: Install Python SE Linux lib
+  import_tasks: python-selinux.yml
+
+- name: Check if there's an unarchived Confluent package
+  stat:
+    path:  "{{dst_path}}/confluent-{{confluent_version}}"
+  register: unarchived_confluent_package
+
+- block: # Try to download confluent from internet
+  - name: Download Confluent
+    get_url:
+      url: "{{ confluent_url }}"
+      dest: "{{ dst_path }}"
+      force: yes
+
+  rescue: # If it fail, download locally and then copy to hosts
+  - name: Download Confluent locally
+    local_action: get_url url="{{ confluent_url }}" dest="{{ local_path }}" force="yes"
+    become: no
+    run_once: yes
+
+  - name: Copy local Confluent package to hosts
+    copy:
+      src: "/tmp/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      dest: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+
+  always:
+  - name: Unarchive Confluent package
+    unarchive:
+      src: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      dest: "{{ dst_path }}"
+      mode: 0775
+      owner: kafka
+      group: wheel
+      remote_src: yes
+
+  - name: Remove residual file
+    file:
+      path:  "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      state: absent
+
+  when: unarchived_confluent_package.stat.exists == False
+  tags:
+    - download
+
+- name: Creating Zookeeper data dir
+  file:
+    path: "{{ zookeeper.get('data_dir') }}"
+    state: directory
+    recurse: yes
+    owner: zookeeper
+    group: wheel
+    mode: 0766
+  become: yes
+
+- name: Change owner of config directory
+  file:
+    path: "{{ conf_dest }}"
+    state: directory
+    owner: kafka
+    group: wheel
+    recurse: yes
+
+- name: "Create secrets {{ ssl.path }}"
+  file:
+    path: "{{ ssl.path }}"
+    state: directory
+    owner: kafka
+    group: wheel
+    mode: 0600
+
+- name: Create config files
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.dest }}{{ item.name }}"
+    owner: "{{ item.user }}"
+    group: wheel
+  with_items:
+    - template: "zookeeper.properties.j2"
+      name: "zookeeper.properties"
+      dest: "{{ conf_dest }}/"
+      user: zookeeper
+    - template: "zk_myid.j2"
+      name: "myid"
+      dest: "{{ zookeeper.get('data_dir') }}/"
+      user: zookeeper
+    - template: "kafka.properties.j2"
+      name: "kafka.properties"
+      dest: "{{ conf_dest }}/"
+      user: kafka
+
+# - name: Configure security layer for Kafka
+#   import_tasks: "security.yml"
+#   vars:
+#     jkstores:
+#       - "{{ kafka_security.server.keystore }}"
+#       - "{{ kafka_security.server.truststore }}"
+#     keypass: "{{ keypass }}"
+#     templates:
+#       - kafka.properties
+#     service: kafka
+#   tags:
+#     - ssl
+
+- name: Create log dir for every service
+  file:
+    path: "{{ log_basepath }}/{{ item.value.file_name }}"
+    state: directory
+    mode: 0751
+    owner: "{{ item.value.user }}"
+    group: wheel
+  with_dict: "{{ services }}"
+
+- name: Create Init script for services
+  become: yes
+  template:
+    src: service.j2
+    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    owner: "{{ item.value.user }}"
+    mode: 0751
+    group: wheel
+    force: yes
+  with_dict: "{{ services }}"
+  tags:
+    - service
+
+- name: "Include tasks for {{ ansible_service_mgr }}"
+  become: yes
+  include_tasks: "services/{{ ansible_service_mgr }}.yml"
+  tags:
+    - service
+
+- name: Configure and create Kafka topics
+  import_tasks: "configure-topics.yml"
+  vars:
+    kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
+    topics: "{{ default_kafka_topics }}"
+  when: default_kafka_topics is defined
+  tags:
+    - kafka-topics
+    - configuration
+
+- name: Redirect Logs
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    force: yes
+  with_items:
+    - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
+      dest: "{{ log_basepath }}/confluent"
