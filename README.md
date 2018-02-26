@@ -67,6 +67,6 @@ ansible-galaxy install -r requirements.yml
 
 ## Authors
 
-* **Matheus Cunha** - [Matheus Cunha](https://github.com/matheuscunha)
+* [**Matheus Cunha** ](https://github.com/matheuscunha)
 
 See also the list of [contributors](https://github.com/matheuscunha/confluent-kafka-role/contributors) who participated in this project.
