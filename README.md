@@ -1,9 +1,10 @@
 # Confluent Kafka Ansible Role
 
-This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through vars, in [defaults](defaults/main.yml) or [vars](vars/main.yml).
+This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through [vars](vars/main.yml) or [defaults](defaults/main.yml).
 
-[![Platform](http://img.shields.io/badge/platform-centos-932279.svg?style=flat)](#)
+[![Platform](http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat)](#)
 [![Platform](http://img.shields.io/badge/platform-debian-a80030.svg?style=flat)](#)
+[![Platform](http://img.shields.io/badge/platform-fedora-4592fb.svg?style=flat)](#)
 [![Platform](http://img.shields.io/badge/platform-redhat-cc0000.svg?style=flat)](#)
 [![Platform](http://img.shields.io/badge/platform-ubuntu-dd4814.svg?style=flat)](#)
 
@@ -32,7 +33,7 @@ ansible-galaxy install -r requirements.yml
 | RedHat | CentOS  | 6         | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat | CentOS  | 7         | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian | Debian  | Jessie    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian | Debian  | Stetch    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian | Debian  | Stretch   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat | Fedora  | 25 Cloud  | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian | Ubuntu  | Trusty    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian | Ubuntu  | Xenial    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
