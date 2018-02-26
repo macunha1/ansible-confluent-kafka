@@ -1,0 +1,11 @@
+---
+- meta: flush_handlers
+
+- name: restart kafka
+  become: true
+  service:
+    name: kafka
+    state: "{{ item }}"
+  with_items:
+    - stopped
+    - started

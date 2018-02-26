@@ -1,0 +1,22 @@
+---
+- name: Create wheel user group
+  group:
+    name: wheel
+    state: present
+
+- name: Set wheel privileges on sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+
+- name: Create an user for each service
+  user:
+    name: "{{ item }}"
+    group: wheel
+    system: yes
+    password: no
+  with_items: "{{ confluent_services }}"
+
+

@@ -1,0 +1,27 @@
+- name: "Create secrets {{ ssl.path }}"
+  file:
+    path: "{{ ssl.path }}"
+    state: directory
+    owner: kafka
+    group: wheel
+    mode: 0600
+
+- name: Copy certs and keys from Ansible Vault
+  copy:
+    src: "{{ local.files }}/{{ item }}"
+    dest: "{{ ssl.path }}"
+    owner: kafka
+    group: wheel
+    mode: 0600
+  with_items: "{{ jkstores }}"
+
+- name: "Register new {{ service }} template with security layer"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ conf_dest }}/{{ item }}"
+    owner: kafka
+    group: wheel
+    mode: 0644
+    force: yes
+  with_items: "{{ templates }}"
+  notify: restart {{ service }}

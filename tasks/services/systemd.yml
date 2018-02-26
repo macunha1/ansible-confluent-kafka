@@ -1,0 +1,24 @@
+- name: Create Systemd services unit
+  become: yes
+  template:
+    src: systemd.service.j2
+    dest: "/etc/systemd/system/{{ item.value.file_name }}.service"
+    mode: 0640
+    group: wheel
+    force: yes
+  with_dict: "{{ services }}"
+
+- name: Reload Systemd configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start Systemd services
+  systemd:
+    name: "{{ item.value.file_name }}"
+    state: started
+  with_dict: "{{ services }}"
+  register: result
+  until: result | succeeded
+  retries: "{{ services.keys() | length }}"
+  ignore_errors: yes
+

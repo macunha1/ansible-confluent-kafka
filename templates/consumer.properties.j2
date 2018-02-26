@@ -1,0 +1,22 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Config file automatic generated using zookeeper template from Ansible
+
+bootstrap.servers={{ bootstrap_servers.split() | join(',') }}
+auto.offset.reset=earliest
+partition.assignment.strategy=org.apache.kafka.clients.consumer.RoundRobinAssignor
+group.id={{ group_id_consumer }}
+exclude.internal.topics={{ exclude_internal_topics }}
+client.id={{ client_id_consumer }}
+
+####### Security Layer #######
+security.protocol=SSL
+ssl.truststore.location={{ ssl.path }}/{{ kafka_security.client.truststore }}
+ssl.truststore.password={{ keypass }}
+ssl.truststore.type=JKS
