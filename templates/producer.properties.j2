@@ -18,7 +18,7 @@
 
 # list of brokers used for bootstrapping knowledge about the rest of the cluster
 # format: host1:port1,host2:port2 ...
-bootstrap.servers={{ ansible_default_ipv4.address }}:9092
+bootstrap.servers={{ kafka_ip }}:{{ kafka_plaintext_port }}
 client.id={{ client_id_producer }}
 retries={{ qty_retries_producer }}
 

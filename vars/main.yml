@@ -20,6 +20,7 @@ ion_timeout_ms: 6000
 confluent_support_metrics_enable: true
 confluent_support_customer_id: "anonymous"
 auto_create_topics: false
+default_replication_factor: "{{ groups['kafka'] | length | root | int }}"
 
 ssl:
   path: /var/private/ssl
@@ -40,11 +41,13 @@ listeners_schema: "http://0.0.0.0:8081"
 kafkastore_topic: "schema-registry"
 debug: "false"
 
+zookeeper_port: 2181
+zookeepers: "{% for server in groups['zookeeper'] %}{{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }} {% endfor %}"
+
 zookeeper:
-  connect: "{{ ansible_default_ipv4.address }}:2181"
+  connect: "{{ zookeepers.split() | join(',') }}"
   data_dir: "{{ data_basepath }}/zookeeper"
   log_dir: "{{ data_basepath }}/logs/zookeeper"
-  port: 2181
   max_cnxns: 0
   init_limit: 5
   sync_limit: 3

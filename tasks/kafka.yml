@@ -1,0 +1,40 @@
+---
+
+- name: "Create secrets {{ ssl.path }}"
+  file:
+    path: "{{ ssl.path }}"
+    state: directory
+    owner: kafka
+    group: wheel
+    mode: 0600
+
+- name: Create Kafka config files
+  template:
+    src: "kafka.properties.j2"
+    dest: "{{ conf_dest }}/kafka.properties"
+    owner: kafka
+    group: wheel
+
+- name: "Include tasks for {{ ansible_service_mgr }}"
+  become: yes
+  include_tasks: "services/{{ ansible_service_mgr }}.yml"
+  vars:
+    services:
+      kafka:
+        file_name: "kafka"
+        user: "kafka"
+        daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-server-start"
+        daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-server-stop"
+        daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
+        daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
+
+      kafka-rest:
+        file_name: "kafka-rest"
+        user: "kafka"
+        daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-rest-start"
+        daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-rest-stop"
+        daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
+        daemon_opts: " -daemon"
+  tags:
+    - service
+

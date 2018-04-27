@@ -2,8 +2,6 @@
 
 - name: Create necessary users and groups
   import_tasks: groups.yml
-  vars:
-    confluent_services: "{{ services.keys() | list }}"
   tags:
     - groups
 
@@ -52,23 +50,12 @@
   tags:
     - download
 
-- name: Creating Zookeeper data dir
-  file:
-    path: "{{ zookeeper.get('data_dir') }}"
-    state: directory
-    recurse: yes
-    owner: zookeeper
-    group: wheel
-    mode: 0766
+- name: "Include tasks for Zookeeper"
   become: yes
-
-- name: Change owner of config directory
-  file:
-    path: "{{ conf_dest }}"
-    state: directory
-    owner: kafka
-    group: wheel
-    recurse: yes
+  include_tasks: "zookeeper.yml"
+  when: inventory_hostname in groups['zookeeper']
+  tags:
+    - service
 
 - name: "Create secrets {{ ssl.path }}"
   file:
@@ -78,26 +65,14 @@
     group: wheel
     mode: 0600
 
-- name: Create config files
-  template:
-    src: "{{ item.template }}"
-    dest: "{{ item.dest }}{{ item.name }}"
-    owner: "{{ item.user }}"
-    group: wheel
-  with_items:
-    - template: "zookeeper.properties.j2"
-      name: "zookeeper.properties"
-      dest: "{{ conf_dest }}/"
-      user: zookeeper
-    - template: "zk_myid.j2"
-      name: "myid"
-      dest: "{{ zookeeper.get('data_dir') }}/"
-      user: zookeeper
-    - template: "kafka.properties.j2"
-      name: "kafka.properties"
-      dest: "{{ conf_dest }}/"
-      user: kafka
+- name: "Include tasks for Kafka"
+  become: yes
+  include_tasks: "kafka.yml"
+  when: inventory_hostname in groups['kafka']
+  tags:
+    - service
 
+# TO-DO: Make TLS useful again
 # - name: Configure security layer for Kafka
 #   import_tasks: "security.yml"
 #   vars:
@@ -113,31 +88,12 @@
 
 - name: Create log dir for every service
   file:
-    path: "{{ log_basepath }}/{{ item.value.file_name }}"
+    path: "{{ log_basepath }}/{{ item }}"
     state: directory
     mode: 0751
-    owner: "{{ item.value.user }}"
+    owner: kafka
     group: wheel
-  with_dict: "{{ services }}"
-
-- name: Create Init script for services
-  become: yes
-  template:
-    src: service.j2
-    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: "{{ item.value.user }}"
-    mode: 0751
-    group: wheel
-    force: yes
-  with_dict: "{{ services }}"
-  tags:
-    - service
-
-- name: "Include tasks for {{ ansible_service_mgr }}"
-  become: yes
-  include_tasks: "services/{{ ansible_service_mgr }}.yml"
-  tags:
-    - service
+  with_items: "{{ confluent_services }}"
 
 - name: Configure and create Kafka topics
   import_tasks: "configure-topics.yml"

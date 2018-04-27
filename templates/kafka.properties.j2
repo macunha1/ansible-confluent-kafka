@@ -13,11 +13,12 @@
 delete.topic.enable={{ delete_topic_enable }}
 reserved.broker.max.id={{ reserved_broker_max }}
 auto.create.topics.enable={{ auto_create_topics }}
+offsets.topic.replication.factor={{ default_replication_factor }}
 
 ############################# Socket Server Settings #############################
 
-advertised.listeners=PLAINTEXT://{{ ansible_default_ipv4.address }}:9092,SSL://{{ ansible_default_ipv4.address }}:9093
-listeners=PLAINTEXT://{{ ansible_default_ipv4.address }}:9092,SSL://{{ ansible_default_ipv4.address }}:9093
+advertised.listeners=PLAINTEXT://{{ kafka_ip }}:{{ kafka_plaintext_port }},SSL://{{ kafka_ip }}:{{ kafka_security_port }}
+listeners=PLAINTEXT://{{ kafka_ip }}:{{ kafka_plaintext_port }},SSL://{{ kafka_ip }}:{{ kafka_security_port }}
 
 # The number of threads handling network requests
 num.network.threads={{ num_network_threads }}

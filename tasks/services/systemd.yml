@@ -1,3 +1,16 @@
+- name: Create Init script for services
+  become: yes
+  template:
+    src: service.j2
+    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    owner: kafka
+    mode: 0751
+    group: wheel
+    force: yes
+  with_dict: "{{ services }}"
+  tags:
+    - service
+
 - name: Create Systemd services unit
   become: yes
   template:
@@ -18,7 +31,7 @@
     state: started
   with_dict: "{{ services }}"
   register: result
-  until: result | succeeded
-  retries: "{{ services.keys() | length }}"
+  until: result is succeeded
+  retries: 3
   ignore_errors: yes
 

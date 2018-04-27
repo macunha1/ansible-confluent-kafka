@@ -1,6 +1,7 @@
 # Confluent Kafka Ansible Role
 
-This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through [vars](vars/main.yml) or [defaults](defaults/main.yml).
+This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through [vars](vars/main.yml). There's a list of necessary vars at [defaults](defaults/main.yml).
+It's going with [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java) as a requirement, but you can use any other Java role. If, for example, ansiblebit.oracle-java aren't working for some reasong (mainly the Oracle website crawling).
 
 [![Platform](http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat)](#)
 [![Platform](http://img.shields.io/badge/platform-debian-a80030.svg?style=flat)](#)
@@ -18,7 +19,7 @@ Ansible 2.2+, Python and Pip.
 pip install ansible>=2.2.0
 ```
 
-After installing Ansible, you must install [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java), necessary to the JVM for Kafka.
+After installing Ansible, you must install some [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name), and run it, Kafka needs a JVM to run.
 
 Which can be easily done through:
 
@@ -38,7 +39,9 @@ ansible-galaxy install -r requirements.yml
 | Debian | Ubuntu  | Trusty    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian | Ubuntu  | Xenial    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 
-## Example Playbook
+## Quickstart
+
+### Example playbook
 
 ```yaml
 - hosts: kafka
@@ -52,13 +55,22 @@ ansible-galaxy install -r requirements.yml
     data_basepath: "/var/data"
     initscripts_path: "/usr/sbin"
     conf_dest: "/etc/config"
-    # Oracle Java necessary vars
+    # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
     oracle_java_set_as_default: yes
     oracle_java_version: 8
 
   roles:
     - ansiblebit.oracle-java
     - matheuscunha.confluent-kafka
+```
+
+### Example inventory
+```toml
+[kafka]
+192.168.50.3
+
+[zookeeper]
+192.168.50.3
 ```
 
 ## Built With
