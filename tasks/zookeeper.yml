@@ -1,0 +1,43 @@
+---
+
+- name: Zookeeper | Create data dir
+  file:
+    path: "{{ zookeeper.get('data_dir') }}"
+    state: directory
+    recurse: yes
+    owner: zookeeper
+    group: wheel
+    mode: 0766
+  become: yes
+
+- name: Zookeeper | Create config files from template
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.dest }}{{ item.name }}"
+    owner: "{{ item.user }}"
+    group: wheel
+  with_items:
+    - template: "zookeeper.properties.j2"
+      name: "zookeeper.properties"
+      dest: "{{ conf_dest }}/"
+      user: zookeeper
+    - template: "zk_myid.j2"
+      name: "myid"
+      dest: "{{ zookeeper.get('data_dir') }}/"
+      user: zookeeper
+
+- name: "Include tasks for {{ ansible_service_mgr }}"
+  become: yes
+  include_tasks: "services/{{ ansible_service_mgr }}.yml"
+  vars:
+    services:
+      zookeeper:
+        file_name: "zookeeper"
+        user: "zookeeper"
+        daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/zookeeper-server-start"
+        daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/zookeeper-server-stop"
+        daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
+        daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/zookeeper.properties"
+  tags:
+    - service
+

@@ -1,4 +1,17 @@
 - name: Create Init script for services
+  become: yes
+  template:
+    src: service.j2
+    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    owner: kafka
+    mode: 0751
+    group: wheel
+    force: yes
+  with_dict: "{{ services }}"
+  tags:
+    - service
+
+- name: Link initscripts path
   file:
     src: "{{ initscripts_path }}/{{ item.value.file_name }}"
     dest: "/etc/init.d/{{ item.value.file_name }}"

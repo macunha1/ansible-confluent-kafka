@@ -7,8 +7,8 @@
 # limitations under the License.
 #
 # Config file automatic generated using zookeeper template from Ansible
-clientPortBindAddress={{ ansible_default_ipv4.address }}
-clientPort={{ zookeeper.get('port') }}
+clientPortBindAddress={{ kafka_ip }}
+clientPort={{ zookeeper_port }}
 
 dataDir={{ zookeeper.get('data_dir') }}
 dataLogDir={{ zookeeper.get('log_dir') }}
@@ -17,6 +17,6 @@ maxClientCnxns={{ zookeeper.get('max_cnxns') }}
 initLimit={{ zookeeper.get('init_limit') }}
 syncLimit={{ zookeeper.get('sync_limit') }}
 
-{% for server in ansible_play_hosts %}
-server.{{ loop.index }}={{ hostvars.get(server).ansible_default_ipv4.address }}:2888:3888
+{% for server in groups['zookeeper'] %}
+server.{{ loop.index }}={{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:2888:3888
 {% endfor %}

@@ -1,26 +1,22 @@
 ---
-services:
-  zookeeper:
-    file_name: "zookeeper"
-    user: "zookeeper"
-    daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/zookeeper-server-start"
-    daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/zookeeper-server-stop"
-    daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
-    daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/zookeeper.properties"
 
-  kafka:
-    file_name: "kafka"
-    user: "kafka"
-    daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-server-start"
-    daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-server-stop"
-    daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
-    daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
+confluent_services:
+  - kafka
+  - kafka-rest
+  - zookeeper
 
-  kafka-rest:
-    file_name: "kafka-rest"
-    user: "kafka"
-    daemon_start: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-rest-start"
-    daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-rest-stop"
-    daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
-    daemon_opts: " -daemon"
+kafka_ip: "{{ ansible_all_ipv4_addresses | first }}"
+kafka_plaintext_port: 9092
+kafka_security_port: 9093
 
+dst_path: "/opt"
+local_path: "/tmp"
+confluent_version: "3.3.0"
+confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+log_basepath: "/var/log"
+data_basepath: "/var/data"
+initscripts_path: "/usr/sbin"
+conf_dest: "/etc/config"
+# Oracle Java necessary vars
+oracle_java_set_as_default: yes
+oracle_java_version: 10
