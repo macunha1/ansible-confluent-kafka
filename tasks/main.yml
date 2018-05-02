@@ -86,6 +86,11 @@
 #   tags:
 #     - ssl
 
+- name: Configure security layer for Kafka
+  import_tasks: "jvm-tunning.yml"
+  tags:
+    - tunning
+
 - name: Create log dir for every service
   file:
     path: "{{ log_basepath }}/{{ item }}"
