@@ -8,8 +8,16 @@
     group: wheel
     force: yes
   with_dict: "{{ services }}"
-  tags:
-    - service
+
+- name: Render environment file from kafka-jvm.sh template
+  template:
+    src: kafka-jvm.sh.j2
+    dest: /etc/profile.d/kafka-jvm.sh
+    owner: kafka
+    mode: 0751
+    group: wheel
+    force: yes
+  when: inventory_hostname in groups['kafka']
 
 - name: Create Systemd services unit
   become: yes

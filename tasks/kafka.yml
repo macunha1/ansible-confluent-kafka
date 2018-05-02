@@ -35,6 +35,4 @@
         daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/kafka-rest-stop"
         daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
         daemon_opts: " -daemon"
-  tags:
-    - service
 

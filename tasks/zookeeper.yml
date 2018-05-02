@@ -38,6 +38,4 @@
         daemon_stop: "{{dst_path}}/confluent-{{confluent_version}}/bin/zookeeper-server-stop"
         daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
         daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/zookeeper.properties"
-  tags:
-    - service
 
