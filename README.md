@@ -1,7 +1,9 @@
 # Confluent Kafka Ansible Role
 
 This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through [vars](vars/main.yml). There's a list of necessary vars at [defaults](defaults/main.yml).
-It's going with [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java) as a requirement, but you can use any other Java role. If, for example, ansiblebit.oracle-java aren't working for some reasong (mainly the Oracle website crawling).
+It's going with [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java) as a requirement, but you can use any other Java role. If, for example, ansiblebit.oracle-java aren't working for some reason (mainly the Oracle website crawling).
+
+It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8). BUT, IF for some reason you would like to run it with another JDK, like Open JDK, just go ahead (at your own risk).
 
 [![Platform](http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat)](#)
 [![Platform](http://img.shields.io/badge/platform-debian-a80030.svg?style=flat)](#)
