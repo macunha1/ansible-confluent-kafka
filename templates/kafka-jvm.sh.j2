@@ -1,5 +1,5 @@
-{% set memory_heapsize = (ansible_memtotal_mb/1024) | root %}
-KAFKA_JVM_PERFORMANCE_OPTS=-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80 -Djava.awt.headless=true
+{% set memory_heapsize = ((ansible_memtotal_mb/1024) | root | round | int) %}
+KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80 -Djava.awt.headless=true"
 {% if (memory_heapsize|int) > 1 %}
-KAFKA_HEAP_OPTS=-Xmx{{ memory_heapsize }}g -Xms{{ memory_heapsize }}g
+KAFKA_HEAP_OPTS="-Xmx{{ memory_heapsize }}g -Xms{{ memory_heapsize }}g"
 {% endif %}

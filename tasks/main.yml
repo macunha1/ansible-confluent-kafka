@@ -50,6 +50,14 @@
   tags:
     - download
 
+- name: Create config directory
+  file:
+    path: "{{ conf_dest }}"
+    state: directory
+    owner: kafka
+    group: wheel
+    recurse: yes
+
 - name: "Include tasks for Zookeeper"
   become: yes
   include_tasks: "zookeeper.yml"

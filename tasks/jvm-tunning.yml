@@ -2,7 +2,7 @@
 # Sizing according to https://docs.confluent.io/current/kafka/deployment.html#jvm
 - name: Tunning | Calculate JVM Heapsizes
   set_fact:
-    memory_heapsize: "{{ (ansible_memtotal_mb/1024) | root }}"
+    memory_heapsize: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
 
 - name: Tunning | Add JVM Perfomance Opts vars to /etc/profile
   blockinfile:
