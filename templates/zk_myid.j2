@@ -1,4 +1,4 @@
-{% for server in ansible_play_hosts %}
+{% for server in groups['zookeeper'] %}
 {% if server.host is defined %}
 {% if server.host == inventory_hostname %}
 {{ server.id }}
