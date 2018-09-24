@@ -10,7 +10,7 @@
 
 - name: Check if there's an unarchived Confluent package
   stat:
-    path:  "{{dst_path}}/confluent-{{confluent_version}}"
+    path: "{{ dst_path }}/confluent-{{ confluent_version }}"
   register: unarchived_confluent_package
 
 - block: # Try to download confluent from internet
@@ -43,7 +43,7 @@
 
   - name: Remove residual file
     file:
-      path:  "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      path: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
       state: absent
 
   when: unarchived_confluent_package.stat.exists == False
@@ -56,12 +56,12 @@
     state: directory
     owner: kafka
     group: wheel
-    recurse: yes
+    force: yes
 
 - name: "Include tasks for Zookeeper"
+  include_tasks: zookeeper.yml
+  when: inventory_hostname in zookeeper_group
   become: yes
-  include_tasks: "zookeeper.yml"
-  when: inventory_hostname in groups['zookeeper']
   tags:
     - service
 
@@ -76,7 +76,7 @@
 - name: "Include tasks for Kafka"
   become: yes
   include_tasks: "kafka.yml"
-  when: inventory_hostname in groups['kafka']
+  when: inventory_hostname in kafka_group
   tags:
     - service
 
@@ -95,7 +95,7 @@
 #     - ssl
 
 - name: Configure security layer for Kafka
-  import_tasks: "jvm-tunning.yml"
+  import_tasks: jvm-tunning.yml
   tags:
     - tunning
 

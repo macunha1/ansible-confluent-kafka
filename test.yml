@@ -1,19 +1,13 @@
 ---
-- hosts: all
-
-  vars:
-    dst_path: "/opt"
-    local_path: "/tmp"
-    confluent_version: "3.3.0"
-    confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
-    log_basepath: "/var/log"
-    data_basepath: "/var/data"
-    initscripts_path: "/usr/sbin"
-    conf_dest: "/etc/config"
-    # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
-    oracle_java_set_as_default: yes
-    oracle_java_version: 8
+- hosts: localhost
+  connection: local
 
   roles:
     - ansiblebit.oracle-java
-    - macunha1.confluent-kafka
+
+  tasks:
+  - include: tasks/main.yml
+  handlers:
+  - include: handlers/main.yml
+  vars_files:
+  - defaults/main.yml

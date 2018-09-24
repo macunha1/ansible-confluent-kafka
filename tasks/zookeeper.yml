@@ -2,7 +2,7 @@
 
 - name: Zookeeper | Create data dir
   file:
-    path: "{{ zookeeper.get('data_dir') }}"
+    path: "{{ zookeeper_data_dir }}"
     state: directory
     recurse: yes
     owner: zookeeper
@@ -23,7 +23,7 @@
       user: zookeeper
     - template: "zk_myid.j2"
       name: "myid"
-      dest: "{{ zookeeper.get('data_dir') }}/"
+      dest: "{{ zookeeper_data_dir }}/"
       user: zookeeper
 
 - name: "Include tasks for {{ ansible_service_mgr }}"

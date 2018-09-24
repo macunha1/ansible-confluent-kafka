@@ -1,0 +1,25 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: williamyeh/ansible:ubuntu16.04
+    steps:
+      - checkout
+      - run: |
+          apt-get update -qq
+          apt-get install -qq python-apt python-pycurl
+          pip install ansible==2.5.0
+
+          # Install Ansible playbook requirements (dependencies)
+          ansible-galaxy install -r requirements.yml
+          # Check code style and syntax
+          ansible-playbook -c local --syntax-check test.yml
+          # First run to install
+          ansible-playbook -c local test.yml
+
+workflows:
+  version: 2
+  build:
+    jobs:
+    - test

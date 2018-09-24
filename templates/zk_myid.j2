@@ -1,4 +1,4 @@
-{% for server in groups['zookeeper'] %}
+{% for server in zookeeper_group %}
 {% if server.host is defined %}
 {% if server.host == inventory_hostname %}
 {{ server.id }}

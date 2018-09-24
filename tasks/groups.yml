@@ -4,12 +4,18 @@
     name: wheel
     state: present
 
+- name: Sudoers | Check if file exists
+  stat:
+    path: /etc/sudoers
+  register: sudoers_status
+
 - name: Set wheel privileges on sudoers
   lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: '^%wheel'
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+  when: sudoers_status.stat.exists
 
 - name: Create an user for each service
   user:
