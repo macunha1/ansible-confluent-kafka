@@ -9,6 +9,6 @@
 # Config file automatic generated using zookeeper template from Ansible
 
 listeners={{ listeners_schema }}
-kafkastore.connection.url={{ zookeeper.get('connect') }}
+kafkastore.connection.url={{ zookeeper_connect }}
 kafkastore.topic={{ kafkastore_topic }}
 debug={{ debug }}

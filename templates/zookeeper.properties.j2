@@ -10,13 +10,13 @@
 clientPortBindAddress={{ kafka_ip }}
 clientPort={{ zookeeper_port }}
 
-dataDir={{ zookeeper.get('data_dir') }}
-dataLogDir={{ zookeeper.get('log_dir') }}
-maxClientCnxns={{ zookeeper.get('max_cnxns') }}
+dataDir={{ zookeeper_data_dir }}
+dataLogDir={{ zookeeper_log_dir }}
+maxClientCnxns={{ zookeeper_max_cnxns }}
 
-initLimit={{ zookeeper.get('init_limit') }}
-syncLimit={{ zookeeper.get('sync_limit') }}
+initLimit={{ zookeeper_init_limit }}
+syncLimit={{ zookeeper_sync_limit }}
 
-{% for server in groups['zookeeper'] %}
+{% for server in zookeeper_group %}
 server.{{ loop.index }}={{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:2888:3888
 {% endfor %}
