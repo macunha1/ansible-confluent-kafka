@@ -16,8 +16,13 @@
     group: wheel
 
 - name: "Include tasks for {{ ansible_service_mgr }}"
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ ansible_service_mgr }}.yml"
+      - upstart.yml
+      paths: ./services
   become: yes
-  include_tasks: "services/{{ ansible_service_mgr }}.yml"
   vars:
     services:
       kafka:

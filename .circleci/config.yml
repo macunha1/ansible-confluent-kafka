@@ -5,6 +5,7 @@ defaults: &defaults
     - checkout
     - run: |
         ansible-galaxy install -r requirements.yml
+        ansible-galaxy install macunha1.confluent-kafka
         # Check code style and syntax
         ansible-playbook -c local --syntax-check test.yml
         # First run to install
@@ -13,7 +14,7 @@ defaults: &defaults
 jobs:
   test-centos6:
     docker:
-      - image: williamyeh/ansible:centos6
+      - image: macunha1/ansible:centos-6
     <<: *defaults
   test-centos7:
     docker:
@@ -29,7 +30,7 @@ jobs:
     <<: *defaults
   test-ubuntu14:
     docker:
-      - image: williamyeh/ansible:ubuntu14.04
+      - image: macunha1/ansible:ubuntu-14.04
     <<: *defaults
   test-ubuntu16:
     docker:
@@ -44,10 +45,23 @@ workflows:
   version: 2
   build:
     jobs:
-    - test-centos6
     - test-centos7
     - test-debian8
     - test-debian9
     - test-ubuntu14
     - test-ubuntu16
-    - test-alpine3
+    # - test-alpine3 # TODO: Implement generic linux vars for ansiblebit.oracle-java
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+    - test-centos7
+    - test-debian8
+    - test-debian9
+    - test-ubuntu14
+    - test-ubuntu16
