@@ -3,7 +3,7 @@
 ROLE_DIR=/var/tests
 CURRENT_DIR=$(dirname $0)
 [[ "${CURRENT_DIR}" == '.' ]] && CURRENT_DIR=$(pwd)
-IMAGE=williamyeh/ansible:ubuntu16.04
+IMAGE=macunha1/ansible:ubuntu-14.04
 CONTAINER_NAME="${CURRENT_DIR##*/}-$(date +"%Y-%m-%d")"
 
 _CONTAINER=$(docker ps -a -f "name=${CONTAINER_NAME}" \
@@ -27,12 +27,10 @@ assert () {
 {
     assert "ansible-galaxy install -r requirements.yml" &&
     assert "ansible-playbook -c local --syntax-check test.yml" &&
-    assert "ansible-playbook -c local test.yml" &&
-    assert "ansible-playbook -c local test.yml" \
-        | grep -q 'changed=0.*failed=0'
+    assert "ansible-playbook -c local test.yml"
 } || {
     echo "Tests are failed"
     docker exec -it $RUNNER /bin/bash
 }
 
-# docker rm $(docker stop $RUNNER)
+docker rm $(docker stop $RUNNER)
