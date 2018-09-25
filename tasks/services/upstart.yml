@@ -8,8 +8,9 @@
     force: yes
   with_dict: "{{ services }}"
   become: yes
-  tags:
-    - service
+  args:
+    create: "{{ initscripts_path }}/{{ item.value.file_name }}"
+  register: initscript_creation
 
 - name: Link initscripts path
   file:
@@ -19,7 +20,9 @@
     state: link
     force: yes
   with_dict: "{{ services }}"
-  when: initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
+  when:
+    - initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
+    - initscript_creation.changed
 
 - name: Start services
   service:
