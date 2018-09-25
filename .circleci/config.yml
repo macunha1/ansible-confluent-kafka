@@ -1,25 +1,53 @@
 version: 2
 
+defaults: &defaults
+  steps:
+    - checkout
+    - run: |
+        ansible-galaxy install -r requirements.yml
+        # Check code style and syntax
+        ansible-playbook -c local --syntax-check test.yml
+        # First run to install
+        ansible-playbook -c local test.yml
+
 jobs:
-  test:
+  test-centos6:
+    docker:
+      - image: williamyeh/ansible:centos6
+    <<: *defaults
+  test-centos7:
+    docker:
+      - image: williamyeh/ansible:centos7
+    <<: *defaults
+  test-debian8:
+    docker:
+      - image: williamyeh/ansible:debian8
+    <<: *defaults
+  test-debian9:
+    docker:
+      - image: williamyeh/ansible:debian9
+    <<: *defaults
+  test-ubuntu14:
+    docker:
+      - image: williamyeh/ansible:ubuntu14.04
+    <<: *defaults
+  test-ubuntu16:
     docker:
       - image: williamyeh/ansible:ubuntu16.04
-    steps:
-      - checkout
-      - run: |
-          apt-get update -qq
-          apt-get install -qq python-apt python-pycurl
-          pip install ansible==2.5.0
-
-          # Install Ansible playbook requirements (dependencies)
-          ansible-galaxy install -r requirements.yml
-          # Check code style and syntax
-          ansible-playbook -c local --syntax-check test.yml
-          # First run to install
-          ansible-playbook -c local test.yml
+    <<: *defaults
+  test-alpine3:
+    docker:
+      - image: williamyeh/ansible:alpine3
+    <<: *defaults
 
 workflows:
   version: 2
   build:
     jobs:
-    - test
+    - test-centos6
+    - test-centos7
+    - test-debian8
+    - test-debian9
+    - test-ubuntu14
+    - test-ubuntu16
+    - test-alpine3
