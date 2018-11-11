@@ -50,7 +50,7 @@
   tags:
     - download
 
-- name: Create config directory
+- name: Configuration | Create directory
   file:
     path: "{{ conf_dest }}"
     state: directory
@@ -58,14 +58,14 @@
     group: wheel
     force: yes
 
-- name: "Include tasks for Zookeeper"
+- name: Zookeeper | Include tasks
   include_tasks: zookeeper.yml
   when: inventory_hostname in zookeeper_group
   become: yes
   tags:
     - service
 
-- name: "Create secrets {{ ssl.path }}"
+- name: "Kafka | Create secrets {{ ssl.path }}"
   file:
     path: "{{ ssl.path }}"
     state: directory
@@ -73,7 +73,7 @@
     group: wheel
     mode: 0600
 
-- name: "Include tasks for Kafka"
+- name: Kafka | Including tasks
   become: yes
   include_tasks: "kafka.yml"
   when: inventory_hostname in kafka_group
@@ -94,12 +94,12 @@
 #   tags:
 #     - ssl
 
-- name: Configure security layer for Kafka
+- name: Tunning | Tune JVM heap sizes for Kafka
   import_tasks: jvm-tunning.yml
   tags:
     - tunning
 
-- name: Create log dir for every service
+- name: Logs | Create a dir for each service
   file:
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
@@ -108,17 +108,7 @@
     group: wheel
   with_items: "{{ confluent_services }}"
 
-- name: Configure and create Kafka topics
-  import_tasks: "configure-topics.yml"
-  vars:
-    kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
-    topics: "{{ default_kafka_topics }}"
-  when: default_kafka_topics is defined
-  tags:
-    - kafka-topics
-    - configuration
-
-- name: Redirect Logs
+- name: Logs | Create symlink from Confluent directory
   file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -127,3 +117,13 @@
   with_items:
     - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
       dest: "{{ log_basepath }}/confluent"
+
+- name: Kafka | Configure and create default topics
+  import_tasks: "configure-topics.yml"
+  vars:
+    kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
+    topics: "{{ default_kafka_topics }}"
+  when: default_kafka_topics is defined
+  tags:
+    - kafka-topics
+    - configuration
