@@ -1,5 +1,4 @@
 ---
-
 confluent_services:
   - kafka
   - kafka-rest
@@ -13,7 +12,9 @@ kafka_group: "{% if groups['kafka'] is defined %}{{ groups['kafka'] }}{% else %}
 dst_path: "/opt"
 local_path: "/tmp"
 confluent_version: "3.3.0"
-confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+confluent_base: http://packages.confluent.io/archive
+confluent_package_file: "{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+confluent_url: "{{ confluent_base }}/{{ confluent_package_file }}"
 log_basepath: "/var/log"
 data_basepath: "/var/data"
 initscripts_path: "/usr/sbin"
@@ -40,9 +41,9 @@ log_retention_bytes: 1073741824
 log_segment_bytes: 1073741824
 log_retention_check_interval_ms: 300000
 ion_timeout_ms: 6000
-confluent_support_metrics_enable: true
+confluent_support_metrics_enable: yes
 confluent_support_customer_id: "anonymous"
-auto_create_topics: false
+auto_create_topics: no
 default_replication_factor: "{{ kafka_group | length | root | int }}"
 
 ssl:
@@ -62,10 +63,13 @@ kafka_security:
 ## Schema Registry Vars
 listeners_schema: "http://0.0.0.0:8081"
 kafkastore_topic: "schema-registry"
-debug: "false"
+schema_registry_debug: "false"
 
-zookeeper_group: "{% if groups['zookeeper'] is defined %}{{ groups['zookeeper'] }}{% else %}{{ ansible_play_hosts }}{% endif %}"
-zookeepers: "{% for server in zookeeper_group %}{{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }} {% endfor %}"
+zookeeper_group: "{{ groups['zookeeper'] | default(ansible_play_hosts) }}"
+zookeepers: >
+  "{% for server in zookeeper_group -%}
+  {{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
+  {% endfor %}"
 zookeeper_port: 2181
 zookeeper_connect: "{{ zookeepers.split() | join(',') }}"
 zookeeper_data_dir: "{{ data_basepath }}/zookeeper"
