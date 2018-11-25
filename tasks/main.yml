@@ -22,7 +22,11 @@
 
   rescue: # If it fail, download locally and then copy to hosts
   - name: Download Confluent locally
-    local_action: get_url url="{{ confluent_url }}" dest="{{ local_path }}" force="yes"
+    get_url:
+      url: "{{ confluent_url }}"
+      dest: "{{ local_path }}"
+      force: yes
+    connection: local
     become: no
     run_once: yes
 
@@ -46,7 +50,7 @@
       path: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
       state: absent
 
-  when: unarchived_confluent_package.stat.exists == False
+  when: not unarchived_confluent_package.stat.exists
   tags:
     - download
 

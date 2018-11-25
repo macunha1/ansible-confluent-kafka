@@ -26,22 +26,22 @@ retries={{ qty_retries_producer }}
 compression.type={{ compression_type }}
 
 # name of the partitioner class for partitioning events; default partition spreads data randomly
-#partitioner.class={{partitioner_class}}
+#partitioner.class={{ partitioner_class }}
 
 # the maximum amount of time the client will wait for the response of a request
-#request.timeout.ms={{request_timeout_ms}}
+#request.timeout.ms={{ request_timeout_ms }}
 
 # how long `KafkaProducer.send` and `KafkaProducer.partitionsFor` will block for
-max.block.ms={{max_block_ms}}
+max.block.ms={{ max_block_ms }}
 
 # the producer will wait for up to the given delay to allow other records to be sent so that the sends can be batched together
-#linger.ms={{linger_ms}}
+#linger.ms={{ linger_ms }}
 
 # the maximum size of a request in bytes
-#max.request.size={{max_request_size}}
+#max.request.size={{ max_request_size }}
 
 # the default batch size in bytes when batching multiple records sent to a partition
-#batch.size={{batch_size}}
+#batch.size={{ batch_size }}
 
 # the total bytes of memory the producer can use to buffer records waiting to be sent to the server
-buffer.memory={{buffer_memory}}
+buffer.memory={{ buffer_memory }}

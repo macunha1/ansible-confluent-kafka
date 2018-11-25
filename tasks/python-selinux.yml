@@ -1,7 +1,7 @@
 - name: Enable epel-release
   package:
     name: epel-release
-    state: latest
+    state: present
   when: ansible_os_family == "RedHat"
 
 - name: Set SE Linux Python Lib possibilities
@@ -15,7 +15,5 @@
 - name: Install SE Linux Python Lib
   package:
     name: "{{ libselinux.get(ansible_os_family) }}"
-    state: latest
+    state: present
   when: libselinux.get(ansible_os_family) is defined
-
-

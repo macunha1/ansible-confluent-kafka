@@ -2,7 +2,7 @@
 - meta: flush_handlers
 
 - name: restart kafka
-  become: true
+  become: yes
   service:
     name: kafka
     state: "{{ item }}"
