@@ -46,7 +46,7 @@ workflows:
   build:
     jobs:
     - test-centos7
-    - test-debian8
+    # - test-debian8 # Oracle Java in Debian 8 fails to install, breaks the build
     - test-debian9
     - test-ubuntu14
     - test-ubuntu16
@@ -61,7 +61,6 @@ workflows:
                 - master
     jobs:
     - test-centos7
-    - test-debian8
     - test-debian9
     - test-ubuntu14
     - test-ubuntu16
