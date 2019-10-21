@@ -4,18 +4,16 @@ defaults: &defaults
   steps:
     - checkout
     - run: |
-        ansible-galaxy install -r requirements.yml
+        # ansible-galaxy install -r requirements.yml
+        ansible-galaxy install geerlingguy.java
         ansible-galaxy install macunha1.confluent-kafka
         # Check code style and syntax
         ansible-playbook -c local --syntax-check test.yml
         # First run to install
         ansible-playbook -c local test.yml
 
+
 jobs:
-  test-centos6:
-    docker:
-      - image: macunha1/ansible:centos-6
-    <<: *defaults
   test-centos7:
     docker:
       - image: williamyeh/ansible:centos7
@@ -28,29 +26,25 @@ jobs:
     docker:
       - image: williamyeh/ansible:debian9
     <<: *defaults
-  test-ubuntu14:
-    docker:
-      - image: macunha1/ansible:ubuntu-14.04
-    <<: *defaults
   test-ubuntu16:
     docker:
       - image: williamyeh/ansible:ubuntu16.04
     <<: *defaults
-  test-alpine3:
+  test-ubuntu18:
     docker:
-      - image: williamyeh/ansible:alpine3
+      - image: williamyeh/ansible:ubuntu18.04
     <<: *defaults
 
 workflows:
   version: 2
   build:
     jobs:
-    - test-centos7
-    # - test-debian8 # Oracle Java in Debian 8 fails to install, breaks the build
-    - test-debian9
-    - test-ubuntu14
-    - test-ubuntu16
-    # - test-alpine3 # TODO: Implement generic linux vars for ansiblebit.oracle-java
+      - test-centos7
+      # Debian-based distros
+      - test-debian8
+      - test-debian9
+      - test-ubuntu16
+      # - test-ubuntu18 # TODO
   nightly:
     triggers:
       - schedule:
@@ -60,7 +54,8 @@ workflows:
               only:
                 - master
     jobs:
-    - test-centos7
-    - test-debian9
-    - test-ubuntu14
-    - test-ubuntu16
+      - test-centos7
+      - test-debian8
+      - test-debian9
+      - test-ubuntu16
+      # - test-ubuntu18 # TODO
