@@ -4,7 +4,8 @@
   become: yes
 
   roles:
-    - ansiblebit.oracle-java
+    # - ansiblebit.oracle-java
+    - geerlingguy.java
 
   tasks:
   - include: tasks/main.yml
