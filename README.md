@@ -52,8 +52,10 @@ ansible-galaxy install -r requirements.yml
   vars:
     dst_path: "/opt"
     local_path: "/tmp"
-    confluent_version: "3.3.0"
-    confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+    confluent_version: "5.4.0"
+    scala_version: "2.12"
+    confluent_distribution: "confluent-community"
+    confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
     log_basepath: "/var/log"
     data_basepath: "/var/data"
     initscripts_path: "/usr/sbin"
