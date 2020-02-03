@@ -11,9 +11,11 @@ kafka_group: "{% if groups['kafka'] is defined %}{{ groups['kafka'] }}{% else %}
 
 dst_path: "/opt"
 local_path: "/tmp"
-confluent_version: "3.3.0"
+confluent_version: "5.4.0"
+scala_version: "2.12"
+confluent_distribution: "confluent-community"
 confluent_base: http://packages.confluent.io/archive
-confluent_package_file: "{{ confluent_version[:3] }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+confluent_package_file: "{{ confluent_version[:3] }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
 confluent_url: "{{ confluent_base }}/{{ confluent_package_file }}"
 log_basepath: "/var/log"
 data_basepath: "/var/data"
