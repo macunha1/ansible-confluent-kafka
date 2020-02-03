@@ -32,13 +32,13 @@
 
   - name: Copy local Confluent package to hosts
     copy:
-      src: "/tmp/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
-      dest: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      src: "/tmp/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+      dest: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
 
   always:
   - name: Unarchive Confluent package
     unarchive:
-      src: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      src: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
       dest: "{{ dst_path }}"
       mode: 0775
       owner: kafka
@@ -47,7 +47,7 @@
 
   - name: Remove residual file
     file:
-      path: "{{ dst_path }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+      path: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
       state: absent
 
   when: not unarchived_confluent_package.stat.exists
