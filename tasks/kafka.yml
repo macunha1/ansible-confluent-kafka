@@ -22,7 +22,6 @@
       - "{{ ansible_service_mgr }}.yml"
       - upstart.yml
       paths: ./services
-  become: yes
   vars:
     services:
       kafka:
