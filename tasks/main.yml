@@ -65,7 +65,6 @@
 - name: Zookeeper | Include tasks
   include_tasks: zookeeper.yml
   when: inventory_hostname in zookeeper_group
-  become: yes
   tags:
     - service
 
@@ -78,7 +77,6 @@
     mode: 0600
 
 - name: Kafka | Including tasks
-  become: yes
   include_tasks: "kafka.yml"
   when: inventory_hostname in kafka_group
   tags:
