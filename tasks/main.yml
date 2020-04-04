@@ -1,54 +1,59 @@
 ---
-
-- name: Create necessary users and groups
+- name: System Users | Create necessary users and groups
   import_tasks: groups.yml
+  when: kafka_system_users.enabled
   tags:
     - groups
 
-- name: Install Python SE Linux lib
+- name: SE Linux | Install Python SE Linux lib
   import_tasks: python-selinux.yml
 
-- name: Check if there's an unarchived Confluent package
+- name: Confluent | Check if there's an unarchived package
   stat:
     path: "{{ dst_path }}/confluent-{{ confluent_version }}"
   register: unarchived_confluent_package
 
-- block: # Try to download confluent from internet
-  - name: Download Confluent
-    get_url:
-      url: "{{ confluent_url }}"
-      dest: "{{ dst_path }}"
-      force: yes
+- block: # Try to download the Confluent package on the host directly from the internet
+    - name: Confluent | Download
+      get_url:
+        url: "{{ confluent_url }}"
+        dest: "{{ dst_path }}"
+        force: yes
 
-  rescue: # If it fail, download locally and then copy to hosts
-  - name: Download Confluent locally
-    get_url:
-      url: "{{ confluent_url }}"
-      dest: "{{ local_path }}"
-      force: yes
-    connection: local
-    become: no
-    run_once: yes
+  rescue: # If it fails (e.g. due to network limitations or firewall), download it locally and then copy
+    - name: Confluent | Download locally
+      get_url:
+        url: "{{ confluent_url }}"
+        dest: "{{ local_path }}"
+        force: yes
+      connection: local
+      become: no
+      run_once: yes
 
-  - name: Copy local Confluent package to hosts
-    copy:
-      src: "/tmp/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
-      dest: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+    - name: Confluent | Copy local package to hosts
+      copy:
+        src: "/tmp/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+        dest: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
 
   always:
-  - name: Unarchive Confluent package
-    unarchive:
-      src: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
-      dest: "{{ dst_path }}"
-      mode: 0775
-      owner: kafka
-      group: wheel
-      remote_src: yes
+    - name: Confluent | Unarchive package
+      unarchive:
+        src: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+        dest: "{{ dst_path }}"
+        remote_src: yes
 
-  - name: Remove residual file
-    file:
-      path: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
-      state: absent
+    - name: System Users | Change unarchived package ownership
+      file:
+        path: "{{ dst_path }}"
+        mode: 0775
+        owner: kafka
+        group: "{{ kafka_system_users.group }}"
+      when: kafka_system_users.enabled
+
+    - name: Confluent | Remove archied package
+      file:
+        path: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+        state: absent
 
   when: not unarchived_confluent_package.stat.exists
   tags:
@@ -58,23 +63,21 @@
   file:
     path: "{{ conf_dest }}"
     state: directory
-    owner: kafka
-    group: wheel
     force: yes
+
+- name: Configuration | Change directory ownership
+  file:
+    path: "{{ conf_dest }}"
+    owner: kafka
+    group: "{{ kafka_system_users.group }}"
+    force: yes
+  when: kafka_system_users.enabled
 
 - name: Zookeeper | Include tasks
   include_tasks: zookeeper.yml
   when: inventory_hostname in zookeeper_group
   tags:
     - service
-
-- name: "Kafka | Create secrets {{ ssl.path }}"
-  file:
-    path: "{{ ssl.path }}"
-    state: directory
-    owner: kafka
-    group: wheel
-    mode: 0600
 
 - name: Kafka | Including tasks
   include_tasks: "kafka.yml"
@@ -96,29 +99,16 @@
 #   tags:
 #     - ssl
 
-- name: Tunning | Tune JVM heap sizes for Kafka
+- name: JVM | Tune heap sizes for Kafka
   import_tasks: jvm-tunning.yml
   tags:
     - tunning
 
-- name: Logs | Create a dir for each service
-  file:
-    path: "{{ log_basepath }}/{{ item }}"
-    state: directory
-    mode: 0751
-    owner: kafka
-    group: wheel
-  with_items: "{{ confluent_services }}"
-
-- name: Logs | Create symlink from Confluent directory
-  file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-    force: yes
-  with_items:
-    - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
-      dest: "{{ log_basepath }}/confluent"
+- name: Logs | Including tasks
+  include_tasks: "logs.yml"
+  tags:
+    - service
+    - logs
 
 - name: Kafka | Configure and create default topics
   import_tasks: "configure-topics.yml"

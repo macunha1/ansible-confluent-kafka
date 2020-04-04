@@ -1,26 +1,22 @@
 ---
-
-- name: "Create secrets {{ ssl.path }}"
-  file:
-    path: "{{ ssl.path }}"
-    state: directory
-    owner: kafka
-    group: wheel
-    mode: 0600
-
-- name: Create Kafka config files
+- name: Kafka | Create config files
   template:
     src: "kafka.properties.j2"
     dest: "{{ conf_dest }}/kafka.properties"
-    owner: kafka
-    group: wheel
 
-- name: "Include tasks for {{ ansible_service_mgr }}"
+- name: System Users | Change config file ownership
+  file:
+    path: "{{ conf_dest }}/kafka.properties"
+    owner: kafka
+    group: "{{ kafka_system_users.group }}"
+  when: kafka_system_users.enabled
+
+- name: "Ansible | Include tasks for {{ ansible_service_mgr }}"
   include_tasks: "{{ item }}"
   with_first_found:
     - files:
-      - "{{ ansible_service_mgr }}.yml"
-      - upstart.yml
+        - "{{ ansible_service_mgr }}.yml"
+        - upstart.yml
       paths: ./services
   vars:
     services:
