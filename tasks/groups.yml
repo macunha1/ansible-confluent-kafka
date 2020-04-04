@@ -1,26 +1,28 @@
 ---
-- name: Create wheel user group
+- name: System Users | Create user group
   group:
-    name: wheel
+    name: "{{ kafka_system_users.group }}"
     state: present
 
-- name: Sudoers | Check if file exists
+- name: System Users | Check if sudoers file exists
   stat:
     path: /etc/sudoers
   register: sudoers_status
 
-- name: Set wheel privileges on sudoers
+- name: System Users | Include to sudoers
   lineinfile:
-    dest: /etc/sudoers
+    path: /etc/sudoers
     state: present
-    regexp: '^%wheel'
-    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    insertafter: "^%wheel" # or defaults to EOF
+    line: "^%{{ kafka_system_users.group }} ALL=(ALL) NOPASSWD: ALL"
   when: sudoers_status.stat.exists
 
-- name: Create an user for each service
+- name: System Users | Create an user for each service
   user:
     name: "{{ item }}"
-    group: wheel
+    groups:
+      - "{{ kafka_system_users.group }}"
     system: yes
-    password: no
+    create_home: no
+    append: yes
   with_items: "{{ confluent_services }}"

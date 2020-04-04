@@ -1,27 +1,46 @@
-- name: "Create secrets {{ ssl.path }}"
+---
+- name: "TLS | Create secrets {{ ssl.path }}"
+  file:
+    path: "{{ ssl.path }}"
+    state: directory
+
+- name: "System Users | Change {{ ssl.path }} ownership"
   file:
     path: "{{ ssl.path }}"
     state: directory
     owner: kafka
-    group: wheel
+    group: "{{ kafka_system_users.group }}"
     mode: 0600
+  when: kafka_system_users.enabled
 
-- name: Copy certs and keys from Ansible Vault
+- name: TLS | Copy certs and keys from Ansible Vault
   copy:
     src: "{{ local.files }}/{{ item }}"
     dest: "{{ ssl.path }}"
-    owner: kafka
-    group: wheel
-    mode: 0600
   with_items: "{{ jkstores }}"
 
-- name: "Register new {{ service }} template with security layer"
+- name: System Users | Change certs and keys ownership
+  file:
+    path: "{{ ssl.path }}"
+    owner: kafka
+    group: "{{ kafka_system_users.group }}"
+    mode: 0600
+  with_items: "{{ jkstores }}"
+  when: kafka_system_users.enabled
+
+- name: "TLS | Register new {{ service }} template with security layer"
   template:
     src: "{{ item }}.j2"
     dest: "{{ conf_dest }}/{{ item }}"
-    owner: kafka
-    group: wheel
-    mode: 0644
     force: yes
   with_items: "{{ templates }}"
   notify: restart {{ service }}
+
+- name: System Users | Change services ownership
+  file:
+    path: "{{ conf_dest }}/{{ item }}"
+    owner: kafka
+    group: "{{ kafka_system_users.group }}"
+    mode: 0644
+  with_items: "{{ templates }}"
+  when: kafka_system_users.enabled
