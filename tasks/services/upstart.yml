@@ -3,8 +3,9 @@
     src: service.j2
     dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
     mode: 0751
-  with_dict: "{{ services }}"
+    force: yes
   become: yes
+  with_dict: "{{ services }}"
   register: initscript_creation
 
 - name: System Users | Change Init script ownership
@@ -12,8 +13,8 @@
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
     owner: kafka
     group: "{{ kafka_system_users.group }}"
-    force: yes
   become: yes
+  with_dict: "{{ services }}"
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path
