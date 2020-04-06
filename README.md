@@ -1,16 +1,40 @@
-# Confluent Kafka Ansible Role [![CircleCI](https://circleci.com/gh/macunha1/confluent-kafka-role.svg?style=svg)](https://circleci.com/gh/macunha1/confluent-kafka-role)
----
+<h1 align="center">Confluent Kafka Ansible Role</h1>
 
-This project aims to install and configure Kafka using the Confluent package, all configurations can be passed through vars. There's a list of necessary vars at [defaults](defaults/main.yml).
-It's going with [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java) as a requirement, but you can use any other Java role. If, for example, ansiblebit.oracle-java aren't working for some reason (mainly the Oracle website crawling).
+<p align="center">
+    <a href="https://circleci.com/gh/macunha1/confluent-kafka-role" alt="CircleCI build">
+        <img src="https://img.shields.io/circleci/build/github/macunha1/confluent-kafka-role" /></a>
+    <a href="https://galaxy.ansible.com/macunha1/confluent-kafka" alt="Ansible Quality Score">
+        <img src="https://img.shields.io/ansible/quality/24090" /></a>
+    <a href="https://galaxy.ansible.com/macunha1/confluent-kafka" alt="Role Downloads">
+        <img src="https://img.shields.io/ansible/role/d/24090" /></a>
+</p>
 
-It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8). BUT, IF for some reason you would like to run it with another JDK, like Open JDK, just go ahead (at your own risk).
+<p align="center">
+    <img src="http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat" />
+    <img src="http://img.shields.io/badge/platform-debian-a80030.svg?style=flat" />
+    <img src="http://img.shields.io/badge/platform-fedora-4592fb.svg?style=flat" />
+    <img src="http://img.shields.io/badge/platform-redhat-cc0000.svg?style=flat" />
+    <img src="http://img.shields.io/badge/platform-ubuntu-dd4814.svg?style=flat" />
+</p>
 
-[![Platform](http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat)](#)
-[![Platform](http://img.shields.io/badge/platform-debian-a80030.svg?style=flat)](#)
-[![Platform](http://img.shields.io/badge/platform-fedora-4592fb.svg?style=flat)](#)
-[![Platform](http://img.shields.io/badge/platform-redhat-cc0000.svg?style=flat)](#)
-[![Platform](http://img.shields.io/badge/platform-ubuntu-dd4814.svg?style=flat)](#)
+<p align="center">
+    <a href="https://github.com/macunha1/confluent-kafka-role/pulls" alt="GitHub pull requests">
+        <img src="https://img.shields.io/github/issues-pr-raw/macunha1/confluent-kafka-role"></a>
+    <a href="https://github.com/macunha1/confluent-kafka-role/issues" alt="GitHub issues">
+        <img src="https://img.shields.io/github/issues-raw/macunha1/confluent-kafka-role"></a>
+</p>
+
+This Ansible Role aims to install and configure Apache Kafka and Apache Zookeeper using the [Confluent package](https://www.confluent.io).
+
+All configurations can be passed through vars, you can see the list of necessary
+vars at [defaults](defaults/main.yml) and customize them as you wish.
+
+The requirements include [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java),
+but you can use any other Java role. If, for example, ansiblebit.oracle-java
+isn't working for some reason (mainly the Oracle website crawling for Java 8).
+
+It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8) or Java 11.
+BUT, IF for some reason you would like to run it with another JDK, like OpenJDK, just go ahead (at your own risk).
 
 ## Getting Started
 
@@ -32,14 +56,16 @@ ansible-galaxy install -r requirements.yml
 
 ## Tests
 
-| Family | Distribution | Version        | Test Status                                                                     |
-| :-:    | :-:          | :-:            | :-:                                                                             |
-| RedHat | CentOS       | 7              | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian | Debian       | 8 (Jessie)     | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian | Debian       | 9 (Stretch)    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| RedHat | Fedora       | 25 Cloud       | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian | Ubuntu       | 16.04 (Xenial) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian | Ubuntu       | 18.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+The test suite is currently executing against Ansible 2.5.15.
+
+| Family | Distribution |    Version     |                                   Test Status                                   |
+| :----: | :----------: | :------------: | :-----------------------------------------------------------------------------: |
+| RedHat |    CentOS    |       7        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Debian    |   8 (Jessie)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Debian    |  9 (Stretch)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| RedHat |    Fedora    |    25 Cloud    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Ubuntu    | 16.04 (Xenial) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Ubuntu    | 18.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 
 ## Quickstart
 
@@ -81,6 +107,7 @@ ansible-galaxy install -r requirements.yml
 ```
 
 ### Example inventory
+
 ```toml
 [kafka]
 192.168.50.3
@@ -91,12 +118,12 @@ ansible-galaxy install -r requirements.yml
 
 ## Built With
 
-* [Ansible](https://www.ansible.com/) - Simple IT Automation
-* [Confluent Kafka Package](https://www.confluent.io/) - Kafka for the Enterprise
+- [Ansible](https://www.ansible.com/) - Simple IT Automation
+- [Confluent Kafka Package](https://www.confluent.io/) - Kafka for the Enterprise
 
 ## Authors
 
-* [**Matheus Cunha** ](https://github.com/macunha1)
+- [**Matheus Cunha** ](https://github.com/macunha1)
 
 See also the list of [contributors](https://github.com/macunha1/confluent-kafka-role/contributors) who participated in this project.
 

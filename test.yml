@@ -3,13 +3,13 @@
   connection: local
   become: yes
 
-  roles:
-    # - ansiblebit.oracle-java
-    - geerlingguy.java
+  # NOTE: Tired of relying on outside roles.
+  # Assumes that Java was previously 
+  # installed on the CI Docker image
 
   tasks:
-  - include: tasks/main.yml
+    - include: tasks/main.yml
   handlers:
-  - include: handlers/main.yml
+    - include: handlers/main.yml
   vars_files:
-  - defaults/main.yml
+    - defaults/main.yml
