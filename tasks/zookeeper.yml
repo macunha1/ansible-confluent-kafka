@@ -10,11 +10,8 @@
 - name: System Users | Change data dir ownership
   file:
     path: "{{ zookeeper_data_dir }}"
-    state: directory
-    force: yes
     owner: zookeeper
     group: "{{ kafka_system_users.group }}"
-    mode: 0766
   become: yes
   when: kafka_system_users.enabled
 

@@ -7,6 +7,7 @@
 # limitations under the License.
 #
 # Config file automatic generated using zookeeper template from Ansible
+# More information available at: https://github.com/macunha1/confluent-kafka-role
 clientPortBindAddress={{ kafka_ip }}
 clientPort={{ zookeeper_port }}
 
@@ -18,5 +19,10 @@ initLimit={{ zookeeper_init_limit }}
 syncLimit={{ zookeeper_sync_limit }}
 
 {% for server in zookeeper_group %}
-server.{{ loop.index }}={{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:2888:3888
+{% set server_vars = hostvars.get(server) %}
+{% set ipv4 = (
+   server_vars.get("ansible_all_ipv4_addresses") |
+   ternary(server_vars.ansible_all_ipv4_addresses | first,
+           server_vars.ansible_default_ipv4.address)) %}
+server.{{ loop.index }}={{ ipv4 }}:2888:3888
 {% endfor %}
