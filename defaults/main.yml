@@ -26,6 +26,7 @@ log_basepath: "/var/log"
 data_basepath: "/var/data"
 initscripts_path: "/usr/sbin"
 conf_dest: "/etc/config"
+
 # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
 oracle_java_set_as_default: yes
 oracle_java_version: 8

@@ -1,19 +1,30 @@
-- name: Enable epel-release
+---
+- name: RHEL | Enable epel-release
   package:
     name: epel-release
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: Set SE Linux Python Lib possibilities
-  set_fact:
-    libselinux:
-      RedHat:
-        libselinux-python
-      Debian:
-        python-selinux
+- block: # Try to install SELinux bindings with Pip
+    - name: SELinux | Install Python bindings
+      pip:
+        name: selinux
 
-- name: Install SE Linux Python Lib
-  package:
-    name: "{{ libselinux.get(ansible_os_family) }}"
-    state: present
-  when: libselinux.get(ansible_os_family) is defined
+  rescue:
+    - name: SELinux | Set Python packages map
+      set_fact:
+        libselinux:
+          2:
+            RedHat: libselinux-python
+            Debian: python-selinux
+          3:
+            RedHat: python3-selinux
+            Debian: python3-selinux
+
+    - name: SELinux | Install Python bindings using package manager
+      package:
+        name: "{{ libselinux.get(ansible_python.version.major).get(ansible_os_family) }}"
+        state: latest
+      when:
+        - libselinux.get(ansible_python.version.major) is defined
+        - libselinux.get(ansible_python.version.major).get(ansible_os_family) is defined

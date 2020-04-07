@@ -46,7 +46,8 @@ Ansible 2.2+, Python and Pip.
 pip install ansible>=2.2.0
 ```
 
-After installing Ansible, you must install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name), and run it, Kafka needs a JVM to run.
+After installing Ansible, you must install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name),
+and use it in your playbook. Kafka needs a JVM to run.
 
 Which can be easily done through:
 
@@ -56,16 +57,26 @@ ansible-galaxy install -r requirements.yml
 
 ## Tests
 
-The test suite is currently executing against Ansible 2.5.15.
+The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.circleci/config.yml#L8)),
+inside Docker containers running both major Python versions (2 and 3).
+
+For further informations on the Docker images being used to run containers on the CI, take a look at [docker-ansible](https://github.com/macunha1/docker-ansible/)
+
+<div align="center">
 
 | Family | Distribution |    Version     |                                   Test Status                                   |
 | :----: | :----------: | :------------: | :-----------------------------------------------------------------------------: |
+| RedHat |    CentOS    |       6        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat |    CentOS    |       7        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Debian    |   8 (Jessie)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Debian    |  9 (Stretch)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Debian    |  10 (Buster)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat |    Fedora    |    25 Cloud    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Ubuntu    | 16.04 (Xenial) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Ubuntu    | 18.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| Debian |    Ubuntu    | 20.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+
+</div>
 
 ## Quickstart
 
@@ -116,6 +127,13 @@ The test suite is currently executing against Ansible 2.5.15.
 192.168.50.3
 ```
 
+## Feedbacks and further development
+
+If this role didn't work for you, or if you found some bug during the execution,
+let me know. 
+
+Feel free to open a [feature request, an issue](https://github.com/macunha1/confluent-kafka-role/issues), or to send me a Pull request, I will be happy to colaborate.
+
 ## Built With
 
 - [Ansible](https://www.ansible.com/) - Simple IT Automation
@@ -126,7 +144,3 @@ The test suite is currently executing against Ansible 2.5.15.
 - [**Matheus Cunha** ](https://github.com/macunha1)
 
 See also the list of [contributors](https://github.com/macunha1/confluent-kafka-role/contributors) who participated in this project.
-
-#### Feedback, bug-reports, suggestions, ...
-
-Are [welcome](https://github.com/macunha1/confluent-kafka-role/issues)!

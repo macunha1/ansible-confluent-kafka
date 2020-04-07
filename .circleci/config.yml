@@ -5,7 +5,7 @@ defaults: &defaults
   steps:
     - checkout
     - run: |
-        pip install ansible==2.5.15
+        pip install ansible==2.9.6
 
         # ansible-galaxy install -r requirements.yml
         ansible-galaxy install macunha1.confluent-kafka
@@ -53,7 +53,6 @@ workflows:
   version: 2
   build:
     jobs:
-      # Alpine issue: https://github.com/ansible/ansible/issues/23944
       # - test-alpine3
       # - test-centos6
       - test-centos7
@@ -61,6 +60,7 @@ workflows:
       - test-debian10
       # - test-fedora27
       - test-ubuntu16
+      - test-ubuntu20
   nightly:
     triggers:
       - schedule:
@@ -76,3 +76,4 @@ workflows:
       - test-debian10
       # - test-fedora27
       - test-ubuntu16
+      - test-ubuntu20
