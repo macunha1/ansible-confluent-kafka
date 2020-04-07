@@ -1,36 +1,40 @@
 #!/bin/bash
 
-ROLE_DIR=/var/tests
-CURRENT_DIR=$(dirname $0)
-[[ "${CURRENT_DIR}" == '.' ]] && CURRENT_DIR=$(pwd)
-IMAGE=macunha1/ansible:ubuntu-14.04
-CONTAINER_NAME="${CURRENT_DIR##*/}-$(date +"%Y-%m-%d")"
+export WORKDIR=$(cd $(dirname "$0") && pwd)
 
-_CONTAINER=$(docker ps -a -f "name=${CONTAINER_NAME}" \
-        -f "ancestor=${IMAGE}" \
+# DOCKER_TEST_IMAGE=macunha1/ansible:ubuntu-20.04
+DOCKER_TEST_IMAGE=macunha1/alpine-3.11.5-java
+CONTAINER_NAME="${WORKDIR##*/}-$(date +"%Y-%m-%d")"
+
+DOCKER_CONTAINER=$(docker ps -a -f "name=${CONTAINER_NAME}" \
+        -f "ancestor=${DOCKER_TEST_IMAGE}" \
         --format '{{ .Names }}' | head -n 1)
 
-[ -z "${_CONTAINER}" ] && {
-    RUNNER=$(docker run -it --name $CONTAINER_NAME \
-        -v $CURRENT_DIR:$ROLE_DIR \
-        -w $ROLE_DIR \
-        -d $IMAGE bash)
+[ -z "${DOCKER_CONTAINER}" ] && {
+    ROLE_DIR=/usr/local/opt
+
+    RUNNER=$(docker run -it --name ${CONTAINER_NAME} \
+        --rm \
+        -v ${WORKDIR}:${ROLE_DIR} \
+        -w ${ROLE_DIR} \
+        --entrypoint "sh" \
+        -d $DOCKER_TEST_IMAGE)
 } || {
-    RUNNER=${_CONTAINER}
+    RUNNER=${DOCKER_CONTAINER}
 }
 
 assert () {
     docker exec -it $RUNNER $1 || \
-        ( echo ${2-'Test is failed'} && exit 1 )
+        ( echo 'Test for command "'${1}'" just failed' && exit 1 )
 }
 
 {
-    assert "ansible-galaxy install -r requirements.yml" &&
+    assert "pip install ansible==2.9.6"
     assert "ansible-playbook -c local --syntax-check test.yml" &&
     assert "ansible-playbook -c local test.yml"
-} || {
-    echo "Tests are failed"
-    docker exec -it $RUNNER /bin/bash
-}
 
-docker rm $(docker stop $RUNNER)
+    docker stop $RUNNER
+} || {
+    echo "Tests are failing"
+    docker exec -it $RUNNER /bin/sh
+}

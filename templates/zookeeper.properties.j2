@@ -21,7 +21,7 @@ syncLimit={{ zookeeper_sync_limit }}
 {% for server in zookeeper_group %}
 {% set server_vars = hostvars.get(server) %}
 {% set ipv4 = (
-   server_vars.get("ansible_all_ipv4_addresses") |
+   server_vars.ansible_all_ipv4_addresses is defined |
    ternary(server_vars.ansible_all_ipv4_addresses | first,
            server_vars.ansible_default_ipv4.address)) %}
 server.{{ loop.index }}={{ ipv4 }}:2888:3888
