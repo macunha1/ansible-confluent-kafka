@@ -18,7 +18,7 @@ defaults: &defaults
 jobs:
   test-alpine3:
     docker:
-      - image: macunha1/ansible:alpine-3.11.5
+      - image: macunha1/ansible:java-alpine-3.11.5
     <<: *defaults
   test-centos6:
     docker:
@@ -30,11 +30,11 @@ jobs:
     <<: *defaults
   test-debian9:
     docker:
-      - image: macunha1/ansible:debian-9
+      - image: macunha1/ansible:java-debian-9
     <<: *defaults
   test-debian10:
     docker:
-      - image: macunha1/ansible:debian-10
+      - image: macunha1/ansible:java-debian-10
     <<: *defaults
   test-fedora27:
     docker:
@@ -42,11 +42,11 @@ jobs:
     <<: *defaults
   test-ubuntu16:
     docker:
-      - image: macunha1/ansible:ubuntu-16.04
+      - image: macunha1/ansible:java-ubuntu-16.04
     <<: *defaults
   test-ubuntu20:
     docker:
-      - image: macunha1/ansible:ubuntu-20.04
+      - image: macunha1/ansible:java-ubuntu-20.04
     <<: *defaults
 
 workflows:
