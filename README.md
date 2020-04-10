@@ -66,6 +66,7 @@ For further informations on the Docker images being used to run containers on th
 
 | Family | Distribution |    Version     |                                   Test Status                                   |
 | :----: | :----------: | :------------: | :-----------------------------------------------------------------------------: |
+| Alpine | Alpine Linux |      3.8+      | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat |    CentOS    |       6        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | RedHat |    CentOS    |       7        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Debian    |   8 (Jessie)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
