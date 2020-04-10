@@ -24,7 +24,7 @@
     - name: SELinux | Install Python bindings using package manager
       package:
         name: "{{ libselinux.get(ansible_python.version.major).get(ansible_os_family) }}"
-        state: latest
+        state: present
       when:
         - libselinux.get(ansible_python.version.major) is defined
         - libselinux.get(ansible_python.version.major).get(ansible_os_family) is defined
