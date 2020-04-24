@@ -48,19 +48,23 @@ jobs:
     docker:
       - image: macunha1/ansible:java-ubuntu-20.04
     <<: *defaults
+  ansible-lint:
+    docker:
+      - image: macunha1/ansible:py3-alpine-3.11.5
+    steps:
+      - checkout
+      - run: |
+          pip install ansible-lint -qq
+          ansible-lint .
 
 workflows:
   version: 2
   build:
     jobs:
       - test-alpine3
-      # - test-centos6
       - test-centos7
-      - test-debian9
-      - test-debian10
-      # - test-fedora27
-      - test-ubuntu16
       - test-ubuntu20
+      - ansible-lint
   nightly:
     triggers:
       - schedule:
@@ -74,6 +78,5 @@ workflows:
       - test-centos7
       - test-debian9
       - test-debian10
-      # - test-fedora27
       - test-ubuntu16
       - test-ubuntu20

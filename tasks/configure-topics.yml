@@ -19,7 +19,6 @@
     kafka_params:
       - "--replication-factor {{ default_replication_factor }}"
       - "--partitions {{ groups['kafka'] | length }}"
-    kafka_existing_topics: "{{ kafka_topics_result.stdout.split() }}"
   tags:
     - create
 
@@ -29,5 +28,7 @@
     {{ kafka_params | join(" ") }} --create --topic {{ item }}
   run_once: yes
   with_items: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
+  changed_when:
+    - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
   tags:
     - create
