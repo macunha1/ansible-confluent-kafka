@@ -4,7 +4,7 @@
   become: yes
 
   # NOTE: Tired of relying on outside roles.
-  # Assumes that Java was previously 
+  # test.yml playbook assumes that Java was previously
   # installed on the CI Docker image
 
   tasks:
