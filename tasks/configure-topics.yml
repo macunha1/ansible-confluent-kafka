@@ -20,6 +20,10 @@
     --create {% for parameter in kafka_params %} {{ parameter }} {% endfor %}
     --topic {{ item }}
   run_once: yes
+  register: topic_output
+  failed_when:
+    - topic_output.rc != 0
+    - "'already exists.' not in topic_output.stdout"
   changed_when: no
   with_items: "{{ topics }}"
   tags:
