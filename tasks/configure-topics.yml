@@ -1,30 +1,33 @@
-- name: Calculate replication-factor and partitions
+---
+- name: Kafka Topics | Choose a random Zookeeper host to make requests
+  set_fact:
+    random_zookeeper: >-
+      {{ hostvars.get(item).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
+  with_random_choice: "{{ zookeeper_group }}"
+
+- name: Kafka Topics | List topics
+  command: >-
+    {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }} --list
+  run_once: yes
+  changed_when: no
+  register: kafka_topics_result
+  tags:
+    - create
+
+- name: Kafka Topics | Calculate replication-factor and partitions
   set_fact:
     kafka_params:
       - "--replication-factor {{ default_replication_factor }}"
       - "--partitions {{ groups['kafka'] | length }}"
+    kafka_existing_topics: "{{ kafka_topics_result.stdout.split() }}"
   tags:
     - create
 
-- name: Append config var if there's a parameter
-  set_fact:
-    kafka_params: "{{ kafka_params + ['--config {{ param_config }}'] }}"
-  when: param_config is defined and param_config
-  tags:
-    - create
-
-- name: Create a new partitioned topic on Kafka
+- name: Kafka Topics | Create a new partitioned topic on Kafka
   command: >
-    {{ kafka_bins }}/kafka-topics
-    --zookeeper localhost:2181
-    --create {% for parameter in kafka_params %} {{ parameter }} {% endfor %}
-    --topic {{ item }}
+    {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
+    {{ kafka_params | join(" ") }} --create --topic {{ item }}
   run_once: yes
-  register: topic_output
-  failed_when:
-    - topic_output.rc != 0
-    - "'already exists.' not in topic_output.stdout"
-  changed_when: no
-  with_items: "{{ topics }}"
+  with_items: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
   tags:
     - create
