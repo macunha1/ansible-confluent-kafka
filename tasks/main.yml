@@ -114,7 +114,6 @@
   import_tasks: "configure-topics.yml"
   vars:
     kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
-    topics: "{{ default_kafka_topics }}"
   when: default_kafka_topics is defined
   tags:
     - kafka-topics
