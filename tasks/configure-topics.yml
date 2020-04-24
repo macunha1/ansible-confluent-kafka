@@ -2,7 +2,7 @@
   set_fact:
     kafka_params:
       - "--replication-factor {{ default_replication_factor }}"
-      - "--partitions {{ groups['kafka'] | length }} "
+      - "--partitions {{ groups['kafka'] | length }}"
   tags:
     - create
 
@@ -17,9 +17,13 @@
   command: >
     {{ kafka_bins }}/kafka-topics
     --zookeeper localhost:2181
-    --create {% for parameter in kafka_params %}{{ parameter }}{% endfor %}
+    --create {% for parameter in kafka_params %} {{ parameter }} {% endfor %}
     --topic {{ item }}
   run_once: yes
+  register: topic_output
+  failed_when:
+    - topic_output.rc != 0
+    - "'already exists.' not in topic_output.stdout"
   changed_when: no
   with_items: "{{ topics }}"
   tags:
