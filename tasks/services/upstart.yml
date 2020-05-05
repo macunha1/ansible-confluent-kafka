@@ -35,4 +35,5 @@
   service:
     name: "{{ item.value.file_name }}"
     state: "{{ item.value.state | default('started') }}"
+    enabled: "{{ item.value.enabled | default(true) }}"
   with_dict: "{{ services }}"
