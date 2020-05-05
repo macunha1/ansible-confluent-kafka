@@ -114,9 +114,9 @@
 #     - ssl
 
 - name: JVM | Tune heap sizes for Kafka
-  import_tasks: jvm-tunning.yml
+  import_tasks: jvm-tuning.yml
   tags:
-    - tunning
+    - tuning
     - configuration
 
 - name: Logs | Including tasks
