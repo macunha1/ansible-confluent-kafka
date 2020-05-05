@@ -1,8 +1,7 @@
 ---
-
 - name: Init Script | Create scripts for services
   template:
-    src: item.j2
+    src: service.j2
     dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
     mode: 0751
     force: yes
@@ -16,7 +15,7 @@
     owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
   become: yes
-  with_dict: "{{ services  | dict2items }}"
+  with_dict: "{{ services }}"
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path

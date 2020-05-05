@@ -1,5 +1,4 @@
 ---
-
 - name: Kafka | Create config files
   template:
     src: "kafka.properties.j2"

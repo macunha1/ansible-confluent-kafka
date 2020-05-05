@@ -1,5 +1,4 @@
 ---
-
 - name: Systemd | Create Init script for services
   template:
     src: service.j2
@@ -20,21 +19,21 @@
   when: kafka_system_users.enabled
 
 - block:
-  - name: JVM | Render environment file from kafka-jvm.sh template
-    template:
-      src: kafka-jvm.sh.j2
-      dest: /etc/profile.d/kafka-jvm.sh
-      force: yes
+    - name: JVM | Render environment file from kafka-jvm.sh template
+      template:
+        src: kafka-jvm.sh.j2
+        dest: /etc/profile.d/kafka-jvm.sh
+        force: yes
 
-  - name: System Users | Change environment file ownership
-    file:
-      path: /etc/profile.d/kafka-jvm.sh
-      owner: "kafka"
-      mode: 0751
-      group: "{{ kafka_system_users.group }}"
-      force: yes
-    when:
-      - kafka_system_users.enabled
+    - name: System Users | Change environment file ownership
+      file:
+        path: /etc/profile.d/kafka-jvm.sh
+        owner: "kafka"
+        mode: 0751
+        group: "{{ kafka_system_users.group }}"
+        force: yes
+      when:
+        - kafka_system_users.enabled
 
   when:
     - groups['kafka'] is defined
