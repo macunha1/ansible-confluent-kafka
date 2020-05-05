@@ -7,11 +7,15 @@
 
 - name: SE Linux | Install Python SE Linux lib
   import_tasks: python-selinux.yml
+  tags:
+    - installation
 
 - name: Confluent | Check if there's an unarchived package
   stat:
     path: "{{ dst_path }}/confluent-{{ confluent_version }}"
   register: unarchived_confluent_package
+  tags:
+    - installation
 
 - block: # Try to download the Confluent package on the host directly from the internet
     - name: Confluent | Download
@@ -50,7 +54,7 @@
         group: "{{ kafka_system_users.group }}"
       when: kafka_system_users.enabled
 
-    - name: Confluent | Remove archied package
+    - name: Confluent | Remove archived package
       file:
         path: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
         state: absent
@@ -58,12 +62,15 @@
   when: not unarchived_confluent_package.stat.exists
   tags:
     - download
+    - installation
 
 - name: Configuration | Create directory
   file:
     path: "{{ conf_dest }}"
     state: directory
     force: yes
+  tags:
+    - configuration
 
 - name: Configuration | Change directory ownership
   file:
@@ -72,18 +79,22 @@
     group: "{{ kafka_system_users.group }}"
     force: yes
   when: kafka_system_users.enabled
+  tags:
+    - configuration
 
 - name: Zookeeper | Include tasks
   include_tasks: zookeeper.yml
   when: inventory_hostname in zookeeper_group
   tags:
     - service
+    - configuration
 
 - name: Kafka | Including tasks
   include_tasks: "kafka.yml"
   when: inventory_hostname in kafka_group
   tags:
     - service
+    - configuration
 
 # TO-DO: Make TLS useful again
 # - name: Configure security layer for Kafka
@@ -103,12 +114,14 @@
   import_tasks: jvm-tunning.yml
   tags:
     - tunning
+    - configuration
 
 - name: Logs | Including tasks
   include_tasks: "logs.yml"
   tags:
     - service
     - logs
+    - configuration
 
 - name: Kafka | Configure and create default topics
   import_tasks: "configure-topics.yml"
