@@ -60,7 +60,7 @@ ansible-galaxy install -r requirements.yml
 The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.circleci/config.yml#L8)),
 inside Docker containers running both major Python versions (2 and 3).
 
-For further informations on the Docker images being used to run containers on the CI, take a look at [docker-ansible](https://github.com/macunha1/docker-ansible/)
+For further information on the Docker images being used to run containers on the CI, take a look at [docker-ansible](https://github.com/macunha1/docker-ansible/)
 
 <div align="center">
 
