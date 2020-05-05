@@ -4,6 +4,9 @@
   set_fact:
     memory_heapsize: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
   changed_when: no
+  tags:
+    - tuning
+    - configuration
 
 - name: Tunning | Add JVM Perfomance Opts vars to /etc/profile
   blockinfile:
@@ -15,6 +18,9 @@
         -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50
         -XX:MaxMetaspaceFreeRatio=80 -Djava.awt.headless=true"
   changed_when: no
+  tags:
+    - tuning
+    - configuration
 
 - name: Tunning | Add JVM Heapsizes to /etc/profile
   blockinfile:
@@ -23,3 +29,6 @@
       export KAFKA_HEAP_OPTS="-Xmx{{ memory_heapsize }}g -Xms{{ memory_heapsize }}g"
   changed_when: no
   when: memory_heapsize | int > 1
+  tags:
+    - tuning
+    - configuration

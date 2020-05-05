@@ -1,14 +1,19 @@
 ---
+
 - name: RHEL | Enable epel-release
   package:
     name: epel-release
     state: present
   when: ansible_os_family == "RedHat"
+  tags:
+    - installation
 
 - block: # Try to install SELinux bindings with Pip
     - name: SELinux | Install Python bindings
       pip:
         name: selinux
+      tags:
+        - installation
 
   rescue:
     - name: SELinux | Set Python packages map
@@ -28,3 +33,5 @@
       when:
         - libselinux.get(ansible_python.version.major) is defined
         - libselinux.get(ansible_python.version.major).get(ansible_os_family) is defined
+      tags:
+        - installation

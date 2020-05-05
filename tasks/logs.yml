@@ -4,6 +4,10 @@
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
   with_items: "{{ confluent_services }}"
+  tags:
+    - service
+    - logs
+    - configuration
 
 - name: System Users | Change log dir ownership
   file:
@@ -14,6 +18,10 @@
     group: "{{ kafka_system_users.group }}"
   with_items: "{{ confluent_services }}"
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - logs
+    - configuration
 
 - name: Logs | Create symlink from Confluent directory
   file:
@@ -24,3 +32,7 @@
   with_items:
     - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
       dest: "{{ log_basepath }}/confluent"
+  tags:
+    - service
+    - logs
+    - configuration
