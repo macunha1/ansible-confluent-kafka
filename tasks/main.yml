@@ -70,7 +70,7 @@
     state: directory
     force: yes
   tags:
-    - configuration
+    - installation
 
 - name: Configuration | Change directory ownership
   file:
@@ -80,7 +80,7 @@
     force: yes
   when: kafka_system_users.enabled
   tags:
-    - configuration
+    - installation
 
 - name: Zookeeper | Include tasks
   include_tasks: zookeeper.yml
