@@ -5,6 +5,7 @@
   when: kafka_system_users.enabled
   tags:
     - groups
+    - installation
 
 - name: SE Linux | Install Python SE Linux lib
   import_tasks: python-selinux.yml
@@ -133,4 +134,3 @@
   when: default_kafka_topics is defined
   tags:
     - kafka-topics
-    - configuration

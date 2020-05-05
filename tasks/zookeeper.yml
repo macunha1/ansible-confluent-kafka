@@ -6,6 +6,10 @@
     force: yes
     mode: 0766
   become: yes
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: System Users | Change data dir ownership
   file:
@@ -14,6 +18,10 @@
     group: "{{ kafka_system_users.group }}"
   become: yes
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: Zookeeper | Create config files from template
   template:
@@ -26,6 +34,10 @@
     - template: "zk_myid.j2"
       name: "myid"
       dest: "{{ zookeeper_data_dir }}"
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: System Users | Change Zookeeper config files ownership
   file:
@@ -37,6 +49,10 @@
     - "{{ conf_dest }}/zookeeper.properties"
     - "{{ zookeeper_data_dir }}/myid"
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: "Ansible | Include tasks for {{ ansible_service_mgr }}"
   include_tasks: "{{ item }}"
@@ -47,3 +63,7 @@
       paths: ./services
   vars:
     services: "{{ zookeeper_services }}"
+  tags:
+    - service
+    - installation
+    - configuration

@@ -34,7 +34,7 @@
       group: "{{ kafka_system_users.group }}"
       force: yes
     when:
-    - kafka_system_users.enabled
+      - kafka_system_users.enabled
 
   when:
     - groups['kafka'] is defined
