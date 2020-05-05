@@ -3,36 +3,44 @@
 - name: Init Script | Create scripts for services
   template:
     src: service.j2
-    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    dest: "{{ initscripts_path }}/{{ service.value.file_name }}"
     mode: 0751
     force: yes
   become: yes
-  with_dict: "{{ services }}"
+  with_dict: "{{ services  | dict2items }}"
+  loop_control:
+    loop_var: service
   register: initscript_creation
 
 - name: System Users | Change Init script ownership
   file:
-    path: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: "{{ item.value.user }}"
+    path: "{{ initscripts_path }}/{{ system_user.value.file_name }}"
+    owner: "{{ system_user.value.user }}"
     group: "{{ kafka_system_users.group }}"
   become: yes
-  with_dict: "{{ services }}"
+  with_dict: "{{ services  | dict2items }}"
+  loop_control:
+    loop_var: service
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path
   file:
-    src: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    dest: "/etc/init.d/{{ item.value.file_name }}"
-    owner: "{{ item.value.user }}"
+    src: "{{ initscripts_path }}/{{ service.value.file_name }}"
+    dest: "/etc/init.d/{{ service.value.file_name }}"
+    owner: "{{ service.value.user }}"
     state: link
     force: yes
-  with_dict: "{{ services }}"
+  with_dict: "{{ services  | dict2items }}"
+  loop_control:
+    loop_var: service
   when:
     - initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
     - initscript_creation.changed
 
 - name: Init Script | Start services
   service:
-    name: "{{ item.value.file_name }}"
-    state: "{{ item.value.state | default('started') }}"
-  with_dict: "{{ services }}"
+    name: "{{ service.value.file_name }}"
+    state: "{{ service.value.state | default('started') }}"
+  with_dict: "{{ services  | dict2items }}"
+  loop_control:
+    loop_var: service
