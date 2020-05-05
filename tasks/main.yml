@@ -121,7 +121,7 @@
     - configuration
 
 - name: Logs | Including tasks
-  include_tasks: "logs.yml"
+  import_tasks: "logs.yml"
   tags:
     - service
     - logs
