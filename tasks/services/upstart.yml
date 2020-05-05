@@ -1,6 +1,8 @@
+---
+
 - name: Init Script | Create scripts for services
   template:
-    src: service.j2
+    src: item.j2
     dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
     mode: 0751
     force: yes
@@ -11,10 +13,10 @@
 - name: System Users | Change Init script ownership
   file:
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: kafka
+    owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
   become: yes
-  with_dict: "{{ services }}"
+  with_dict: "{{ services  | dict2items }}"
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path
@@ -29,8 +31,9 @@
     - initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
     - initscript_creation.changed
 
-- name: Init Script | Start services
+- name: Init Script | Configure services
   service:
     name: "{{ item.value.file_name }}"
-    state: started
+    state: "{{ item.value.state | default('started') }}"
+    enabled: "{{ item.value.enabled | default(true) }}"
   with_dict: "{{ services }}"

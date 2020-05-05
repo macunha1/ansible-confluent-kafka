@@ -6,6 +6,10 @@
     force: yes
     mode: 0766
   become: yes
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: System Users | Change data dir ownership
   file:
@@ -14,6 +18,10 @@
     group: "{{ kafka_system_users.group }}"
   become: yes
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: Zookeeper | Create config files from template
   template:
@@ -26,6 +34,10 @@
     - template: "zk_myid.j2"
       name: "myid"
       dest: "{{ zookeeper_data_dir }}"
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: System Users | Change Zookeeper config files ownership
   file:
@@ -37,6 +49,10 @@
     - "{{ conf_dest }}/zookeeper.properties"
     - "{{ zookeeper_data_dir }}/myid"
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - installation
+    - configuration
 
 - name: "Ansible | Include tasks for {{ ansible_service_mgr }}"
   include_tasks: "{{ item }}"
@@ -46,14 +62,8 @@
         - upstart.yml
       paths: ./services
   vars:
-    services:
-      zookeeper:
-        file_name: "zookeeper"
-        user: "zookeeper"
-        daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-start"
-        daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
-        daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
-        daemon_opts: >
-          "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}
-          -daemon
-          {% endif %}{{ conf_dest }}/zookeeper.properties"
+    services: "{{ zookeeper_services }}"
+  tags:
+    - service
+    - installation
+    - configuration

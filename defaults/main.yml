@@ -90,3 +90,36 @@ zookeeper_max_cnxns: 0
 zookeeper_init_limit: 5
 zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
+
+## Services
+kafka_services:
+  kafka:
+    file_name: "kafka"
+    user: "kafka"
+    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-server-start"
+    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-server-stop"
+    daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
+    daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
+    state: "started"
+    enabled: true
+
+  kafka-rest:
+    file_name: "kafka-rest"
+    user: "kafka"
+    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-rest-start"
+    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-rest-stop"
+    daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
+    daemon_opts: " -daemon"
+    state: "started"
+    enabled: true
+
+zookeeper_services:
+  zookeeper:
+    file_name: "zookeeper"
+    user: "zookeeper"
+    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-start"
+    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
+    daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
+    daemon_opts: "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}-daemon{% endif %}{{ conf_dest }}/zookeeper.properties"
+    state: "started"
+    enabled: true

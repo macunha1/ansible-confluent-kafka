@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=forking
-{% if inventory_hostname in groups['kafka'] %}
+{% if groups['kafka'] is defined and inventory_hostname in groups['kafka'] %}
 EnvironmentFile=/etc/profile.d/kafka-jvm.sh
 {% endif %}
 ExecStart={{ initscripts_path }}/{{ item.value.file_name }} start
