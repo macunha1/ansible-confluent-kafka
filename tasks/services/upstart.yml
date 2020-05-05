@@ -31,7 +31,7 @@
     - initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
     - initscript_creation.changed
 
-- name: Init Script | Start services
+- name: Init Script | Configure services
   service:
     name: "{{ item.value.file_name }}"
     state: "{{ item.value.state | default('started') }}"
