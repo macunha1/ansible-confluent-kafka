@@ -1,3 +1,5 @@
+---
+
 - name: Systemd | Create Init script for services
   template:
     src: service.j2
@@ -10,30 +12,31 @@
 - name: System Users | Change Init script ownership
   file:
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: kafka
+    owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
     force: yes
   become: yes
   with_dict: "{{ services }}"
   when: kafka_system_users.enabled
 
-- name: JVM | Render environment file from kafka-jvm.sh template
-  template:
-    src: kafka-jvm.sh.j2
-    dest: /etc/profile.d/kafka-jvm.sh
-    force: yes
-  when: inventory_hostname in groups['kafka']
+- block:
+    - name: JVM | Render environment file from kafka-jvm.sh template
+      template:
+        src: kafka-jvm.sh.j2
+        dest: /etc/profile.d/kafka-jvm.sh
+        force: yes
 
-- name: System Users | Change environment file ownership
-  file:
-    path: /etc/profile.d/kafka-jvm.sh
-    owner: kafka
-    mode: 0751
-    group: "{{ kafka_system_users.group }}"
-    force: yes
-  when:
-    - inventory_hostname in groups['kafka']
-    - kafka_system_users.enabled
+    - name: System Users | Change environment file ownership
+      file:
+        path: /etc/profile.d/kafka-jvm.sh
+        owner: "{{ item.value.user }}"
+        mode: 0751
+        group: "{{ kafka_system_users.group }}"
+        force: yes
+      when:
+        - kafka_system_users.enabled
+
+  when: inventory_hostname in groups['kafka']
 
 - name: Systemd | Create services unit
   become: yes
@@ -57,10 +60,10 @@
   systemd:
     daemon_reload: yes
 
-- name: Systemd | Start services
+- name: Systemd | Configure service
   systemd:
     name: "{{ item.value.file_name }}"
-    state: started
+    state: "{{ item.value.state | default('started') }}"
   with_dict: "{{ services }}"
   register: result
   until: result is succeeded

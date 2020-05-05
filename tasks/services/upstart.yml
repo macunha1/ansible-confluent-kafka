@@ -1,3 +1,5 @@
+---
+
 - name: Init Script | Create scripts for services
   template:
     src: service.j2
@@ -11,7 +13,7 @@
 - name: System Users | Change Init script ownership
   file:
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: kafka
+    owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
   become: yes
   with_dict: "{{ services }}"
@@ -32,5 +34,5 @@
 - name: Init Script | Start services
   service:
     name: "{{ item.value.file_name }}"
-    state: started
+    state: "{{ item.value.state | default('started') }}"
   with_dict: "{{ services }}"
