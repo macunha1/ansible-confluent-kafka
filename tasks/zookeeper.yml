@@ -46,14 +46,4 @@
         - upstart.yml
       paths: ./services
   vars:
-    services:
-      zookeeper:
-        file_name: "zookeeper"
-        user: "zookeeper"
-        daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-start"
-        daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
-        daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
-        daemon_opts: >
-          "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}
-          -daemon
-          {% endif %}{{ conf_dest }}/zookeeper.properties"
+    services: "{{ zookeeper_services }}"
