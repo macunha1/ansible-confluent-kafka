@@ -36,7 +36,9 @@
     when:
     - kafka_system_users.enabled
 
-  when: inventory_hostname in groups['kafka']
+  when:
+    - groups['kafka'] is defined
+    - inventory_hostname in groups['kafka']
 
 - name: Systemd | Create services unit
   become: yes
