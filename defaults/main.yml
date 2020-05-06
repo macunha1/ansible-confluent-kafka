@@ -123,3 +123,8 @@ zookeeper_services:
     daemon_opts: "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}-daemon{% endif %}{{ conf_dest }}/zookeeper.properties"
     state: "started"
     enabled: true
+
+#default_kafka_topics:
+#  - name: test_topic
+#    retention_ms: 3600000
+#  - name: foo_topic

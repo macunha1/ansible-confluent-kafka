@@ -22,13 +22,46 @@
   tags:
     - create
 
-- name: Kafka Topics | Create a new partitioned topic on Kafka
-  command: >
-    {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
-    {{ kafka_params | join(" ") }} --create --topic {{ item }}
-  run_once: yes
-  with_items: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
-  changed_when:
-    - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
-  tags:
-    - create
+- block:
+    - name: Kafka Topics | Create a new partitioned topic on Kafka
+      command: >
+        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
+        {{ kafka_params | join(" ") }} --create --topic {{ topic }}
+      run_once: yes
+      loop: "{{ default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) }}"
+      loop_control:
+        loop_var: topic
+      changed_when:
+        - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
+      tags:
+        - create
+
+    - name: Kafka Topics | Set topic lifetime
+      command: >
+        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
+        --alter --topic {{ topic.name }} --config retention.ms={{ topic.retention_ms }}
+      run_once: yes
+      loop: "{{ default_kafka_topics }}"
+      loop_control:
+        loop_var: topic
+      when: topic.retention_ms is defined
+      tags:
+        - create
+
+  when: default_kafka_topics.0 is mapping
+
+- block:
+    - name: Kafka Topics | Create a new partitioned topic on Kafka (Backwards compatible)
+      command: >
+        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
+        {{ kafka_params | join(" ") }} --create --topic {{ topic }}
+      run_once: yes
+      loop: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
+      loop_control:
+        loop_var: topic
+      changed_when:
+        - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
+      tags:
+        - create
+
+  when: default_kafka_topics.0 is not mapping
