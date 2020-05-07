@@ -27,7 +27,7 @@
     - create
 
 - name: Kafka Topics | Create and Configure Topics
-  import_tasks: create-topic.yml
+  include_tasks: create-topic.yml
   loop: "{{ default_kafka_topics }}"
   loop_control:
     loop_var: kafka_topic
