@@ -128,7 +128,7 @@ For further information on the Docker images being used to run containers on the
 192.168.50.3
 ```
 
-## Feedbacks and further development
+## Feedback and further development
 
 If this role didn't work for you, or if you found some bug during the execution,
 let me know. 

@@ -14,21 +14,20 @@
   tags:
     - create
 
+- name: Set Topic Difference Fact
+  set_fact:
+    topics_to_create: "{{ default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) }}"
+
 - name: Kafka Topics | Calculate replication-factor and partitions
   set_fact:
     kafka_params:
-      - "--replication-factor {{ default_replication_factor }}"
-      - "--partitions {{ groups['kafka'] | length }}"
+    - "--replication-factor {{ default_replication_factor }}"
+    - "--partitions {{ groups['kafka'] | length }}"
   tags:
     - create
 
-- name: Kafka Topics | Create a new partitioned topic on Kafka
-  command: >
-    {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
-    {{ kafka_params | join(" ") }} --create --topic {{ item }}
-  run_once: yes
-  with_items: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
-  changed_when:
-    - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
-  tags:
-    - create
+- name: Kafka Topics | Create and Configure Topics
+  include_tasks: create-topic.yml
+  loop: "{{ default_kafka_topics }}"
+  loop_control:
+    loop_var: kafka_topic

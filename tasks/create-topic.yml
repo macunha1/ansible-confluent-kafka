@@ -1,0 +1,28 @@
+---
+
+- name: Kafka Topics | Create a new partitioned topic on Kafka
+  command: >
+    {{ kafka_bins }}/kafka-topics
+    --zookeeper {{ random_zookeeper }}
+    {{ kafka_params | join(" ") }}
+    --create
+    --topic {{ kafka_topic.name }}
+  run_once: yes
+  when: kafka_topic.name in topics_to_create
+  tags:
+    - create
+
+- name: "Kafka Topics | Set topic config options "
+  command: >
+    {{ kafka_bins }}/kafka-topics
+    --zookeeper {{ random_zookeeper }}
+    --alter
+    --topic {{ kafka_topic.name }}
+    --config {{ topic_config.item }}={{ topic_config.value }}
+  run_once: yes
+  loop: "{{ kafka_topic.config }}"
+  loop_control:
+    loop_var: topic_config
+  when: kafka_topic.config is defined
+  tags:
+    - create

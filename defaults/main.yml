@@ -123,3 +123,19 @@ zookeeper_services:
     daemon_opts: "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}-daemon{% endif %}{{ conf_dest }}/zookeeper.properties"
     state: "started"
     enabled: true
+
+#default_kafka_topics:
+## Create a test topic with retention.ms set
+#  - name: test_topic
+#    config:
+#       - item: retention.ms
+#         value: 3600000
+## Create a 2nd test topic with defaults
+#  - name: test_topic_2
+## Create a 3rd test topic with compression.type and file.delete.delay.ms set
+#  - name: test_topic_3
+#    config:
+#       - item: compression.type
+#         value: zip
+#       - item: file.delete.delay.ms
+#         value: 30000
