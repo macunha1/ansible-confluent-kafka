@@ -14,6 +14,10 @@
   tags:
     - create
 
+- name: Set Topic Difference Fact
+  set_facts:
+    topics_to_create: "{{ default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) }}"
+
 - name: Kafka Topics | Calculate replication-factor and partitions
   set_fact:
     kafka_params:
@@ -22,47 +26,8 @@
   tags:
     - create
 
-- block:
-    - name: Kafka Topics | Create a new partitioned topic on Kafka
-      command: >
-        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
-        {{ kafka_params | join(" ") }} --create --topic {{ topic }}
-      run_once: yes
-      loop: "{{ default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) }}"
-      loop_control:
-        loop_var: topic
-      changed_when:
-        - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
-      tags:
-        - create
-
-    - name: Kafka Topics | Set topic lifetime
-      command: >
-        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
-        --alter --topic {{ topic.name }} --config retention.ms={{ topic.retention_ms }}
-      run_once: yes
-      loop: "{{ default_kafka_topics }}"
-      loop_control:
-        loop_var: topic
-      when: topic.retention_ms is defined
-      tags:
-        - create
-
-  when:
-     - default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) | length > 0
-
-- block:
-    - name: Kafka Topics | Create a new partitioned topic on Kafka (Backwards compatible)
-      command: >
-        {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }}
-        {{ kafka_params | join(" ") }} --create --topic {{ topic }}
-      run_once: yes
-      loop: "{{ default_kafka_topics | difference(kafka_topics_result.stdout_lines) }}"
-      loop_control:
-        loop_var: topic
-      changed_when:
-        - default_kafka_topics | difference(kafka_topics_result.stdout_lines) | length > 0
-      tags:
-        - create
-
-  when: default_kafka_topics.0 is not mapping
+ - name: Kafka Topics | Create and Configure Topics
+   import_tasks: create-topic.yml
+   loop: "{{ default_kafka_topics }}"
+   loop_control:
+     loop_var: kafka_topic

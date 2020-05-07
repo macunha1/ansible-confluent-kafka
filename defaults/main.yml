@@ -125,6 +125,17 @@ zookeeper_services:
     enabled: true
 
 #default_kafka_topics:
+## Create a test topic with retention.ms set
 #  - name: test_topic
-#    retention_ms: 3600000
-#  - name: foo_topic
+#    config:
+#       - item: retention.ms
+#         value: 3600000
+## Create a 2nd test topic with defaults
+#  - name: test_topic_2
+## Create a 3rd test topic with compression.type and file.delete.delay.ms set
+#  - name: test_topic_3
+#    config:
+#       - item: compression.type
+#         value: zip
+#       - item: file.delete.delay.ms
+#         value: 30000
