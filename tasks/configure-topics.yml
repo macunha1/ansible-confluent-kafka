@@ -15,7 +15,7 @@
     - create
 
 - name: Set Topic Difference Fact
-  set_facts:
+  set_fact:
     topics_to_create: "{{ default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) }}"
 
 - name: Kafka Topics | Calculate replication-factor and partitions
