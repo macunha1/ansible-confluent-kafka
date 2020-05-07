@@ -21,13 +21,13 @@
 - name: Kafka Topics | Calculate replication-factor and partitions
   set_fact:
     kafka_params:
-      - "--replication-factor {{ default_replication_factor }}"
-      - "--partitions {{ groups['kafka'] | length }}"
+    - "--replication-factor {{ default_replication_factor }}"
+    - "--partitions {{ groups['kafka'] | length }}"
   tags:
     - create
 
- - name: Kafka Topics | Create and Configure Topics
-   import_tasks: create-topic.yml
-   loop: "{{ default_kafka_topics }}"
-   loop_control:
-     loop_var: kafka_topic
+- name: Kafka Topics | Create and Configure Topics
+  import_tasks: create-topic.yml
+  loop: "{{ default_kafka_topics }}"
+  loop_control:
+    loop_var: kafka_topic
