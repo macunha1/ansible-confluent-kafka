@@ -48,7 +48,8 @@
       tags:
         - create
 
-  when: default_kafka_topics.0 is mapping
+  when:
+     - default_kafka_topics | map(attribute='name') | list | difference(kafka_topics_result.stdout_lines) | length > 0
 
 - block:
     - name: Kafka Topics | Create a new partitioned topic on Kafka (Backwards compatible)
