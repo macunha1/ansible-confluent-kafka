@@ -15,8 +15,8 @@
   include_tasks: "{{ item }}"
   with_first_found:
     - files:
-        - "{{ ansible_service_mgr }}.yml"
-        - upstart.yml
+        - "{{ ansible_service_mgr }}.yaml"
+        - upstart.yaml
       paths: ./services
   vars:
     services: "{{ kafka_services }}"

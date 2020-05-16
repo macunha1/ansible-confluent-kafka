@@ -27,7 +27,7 @@
 This Ansible Role aims to install and configure Apache Kafka and Apache Zookeeper using the [Confluent package](https://www.confluent.io).
 
 All configurations can be passed through vars, you can see the list of necessary
-vars at [defaults](defaults/main.yml) and customize them as you wish.
+vars at [defaults](defaults/main.yaml) and customize them as you wish.
 
 The requirements include [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java),
 but you can use any other Java role. If, for example, ansiblebit.oracle-java
@@ -52,12 +52,12 @@ and use it in your playbook. Kafka needs a JVM to run.
 Which can be easily done through:
 
 ```shell
-ansible-galaxy install -r requirements.yml
+ansible-galaxy install -r requirements.yaml
 ```
 
 ## Tests
 
-The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.circleci/config.yml#L8)),
+The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.circleci/config.yaml#L8)),
 inside Docker containers running both major Python versions (2 and 3).
 
 For further information on the Docker images being used to run containers on the CI, take a look at [docker-ansible](https://github.com/macunha1/docker-ansible/)

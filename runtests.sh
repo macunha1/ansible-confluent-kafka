@@ -29,8 +29,8 @@ assert() {
 
 {
 	assert "pip install ansible==2.9.6"
-	assert "ansible-playbook -c local --syntax-check test.yml" &&
-		assert "ansible-playbook -c local test.yml"
+	assert "ansible-playbook -c local --syntax-check test.yaml" &&
+		assert "ansible-playbook -c local test.yaml"
 
 	# docker stop $RUNNER
 } || {
