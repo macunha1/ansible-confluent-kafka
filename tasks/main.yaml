@@ -1,14 +1,14 @@
 ---
 
 - name: System Users | Create necessary users and groups
-  import_tasks: groups.yml
+  import_tasks: groups.yaml
   when: kafka_system_users.enabled
   tags:
     - groups
     - installation
 
 - name: SE Linux | Install Python SE Linux lib
-  import_tasks: python-selinux.yml
+  import_tasks: python-selinux.yaml
   tags:
     - installation
 
@@ -85,7 +85,7 @@
     - installation
 
 - name: Zookeeper | Include tasks
-  include_tasks: zookeeper.yml
+  include_tasks: zookeeper.yaml
   when: inventory_hostname in zookeeper_group
   tags:
     - service
@@ -93,7 +93,7 @@
     - configuration
 
 - name: Kafka | Including tasks
-  include_tasks: "kafka.yml"
+  include_tasks: "kafka.yaml"
   when: inventory_hostname in kafka_group
   tags:
     - service
@@ -102,7 +102,7 @@
 
 # TO-DO: Make TLS useful again
 # - name: Configure security layer for Kafka
-#   import_tasks: "security.yml"
+#   import_tasks: "security.yaml"
 #   vars:
 #     jkstores:
 #       - "{{ kafka_security.server.keystore }}"
@@ -115,20 +115,20 @@
 #     - ssl
 
 - name: JVM | Tune heap sizes for Kafka
-  import_tasks: jvm-tuning.yml
+  import_tasks: jvm-tuning.yaml
   tags:
     - tuning
     - configuration
 
 - name: Logs | Including tasks
-  import_tasks: "logs.yml"
+  import_tasks: "logs.yaml"
   tags:
     - service
     - logs
     - configuration
 
 - name: Kafka | Configure and create default topics
-  import_tasks: "configure-topics.yml"
+  import_tasks: "configure-topics.yaml"
   vars:
     kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
   when: default_kafka_topics is defined

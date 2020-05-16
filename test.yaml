@@ -4,12 +4,12 @@
   become: yes
 
   # NOTE: Tired of relying on outside roles.
-  # test.yml playbook assumes that Java was previously
+  # test.yaml playbook assumes that Java was previously
   # installed on the CI Docker image
 
   tasks:
-    - include: tasks/main.yml
+    - include: tasks/main.yaml
   handlers:
-    - include: handlers/main.yml
+    - include: handlers/main.yaml
   vars_files:
-    - defaults/main.yml
+    - defaults/main.yaml

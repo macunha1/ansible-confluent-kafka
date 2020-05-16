@@ -4,16 +4,18 @@ version: 2
 defaults: &defaults
   steps:
     - checkout
-    - run: |
-        pip install ansible==2.9.6
+    - run:
+        name: Ansible playbook execution
+        command: |
+          pip install ansible==2.9.6
 
-        # ansible-galaxy install -r requirements.yml
-        ansible-galaxy install macunha1.confluent-kafka
+          # ansible-galaxy install -r requirements.yaml
+          ansible-galaxy install macunha1.confluent-kafka
 
-        # Check code style and syntax
-        ansible-playbook -c local --syntax-check test.yml
-        # Install using test.yml playbook
-        ansible-playbook -c local test.yml
+          # Check code style and syntax
+          ansible-playbook -c local --syntax-check test.yaml
+          # Install using test.yaml playbook
+          ansible-playbook -c local test.yaml
 
 jobs:
   test-alpine3:
@@ -53,9 +55,16 @@ jobs:
       - image: macunha1/ansible:py3-alpine-3.11.5
     steps:
       - checkout
-      - run: |
-          pip install ansible-lint -qq
-          ansible-lint .
+      - run:
+          name: YAML Lint
+          command: |
+            pip install yamllint -qq
+            yamllint -c .circleci/lint/config.yaml .
+      - run:
+          name: Ansible Lint
+          command: |
+            pip install ansible-lint -qq
+            ansible-lint .
 
 workflows:
   version: 2

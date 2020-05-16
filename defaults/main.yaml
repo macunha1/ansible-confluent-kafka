@@ -7,12 +7,17 @@ confluent_services:
 kafka_ip: "{{ ansible_all_ipv4_addresses | first }}"
 kafka_plaintext_port: 9092
 kafka_security_port: 9093
-kafka_group: "{% if groups['kafka'] is defined %}{{ groups['kafka'] }}{% else %}{{ ansible_play_hosts }}{% endif %}"
+kafka_group: >-
+  {%- if groups['kafka'] is defined -%}
+  {{ groups['kafka'] }}
+  {%- else -%}
+  {{ ansible_play_hosts }}
+  {%- endif -%}
 
 kafka_system_users:
-  enabled: true
+  enabled: yes
   group: wheel
-  include_to_sudoers: true
+  include_to_sudoers: yes
 
 dst_path: "/opt"
 local_path: "/tmp"
@@ -20,8 +25,11 @@ confluent_version: "5.4.0"
 scala_version: "2.12"
 confluent_distribution: "confluent-community"
 confluent_base: http://packages.confluent.io/archive
-confluent_package_file: "{{ confluent_version[:3] }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
-confluent_url: "{{ confluent_base }}/{{ confluent_package_file }}"
+confluent_package_file: >-
+  {{ confluent_version[:3] }}/{{ confluent_distribution }}
+  -{{ confluent_version }}-{{ scala_version }}.tar.gz
+confluent_url: "{{ confluent_base }}/{{ confluent_package_file | replace(' ', '') }}"
+
 log_basepath: "/var/log"
 data_basepath: "/var/data"
 initscripts_path: "/usr/sbin"
@@ -101,7 +109,7 @@ kafka_services:
     daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
     daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
     state: "started"
-    enabled: true
+    enabled: yes
 
   kafka-rest:
     file_name: "kafka-rest"
@@ -111,7 +119,7 @@ kafka_services:
     daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
     daemon_opts: " -daemon"
     state: "started"
-    enabled: true
+    enabled: yes
 
 zookeeper_services:
   zookeeper:
@@ -120,11 +128,14 @@ zookeeper_services:
     daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-start"
     daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
     daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
-    daemon_opts: "{% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}-daemon{% endif %}{{ conf_dest }}/zookeeper.properties"
+    daemon_opts: >-
+      {% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}
+      -daemon
+      {%- endif -%}
+      {{ conf_dest }}/zookeeper.properties
     state: "started"
-    enabled: true
-
-#default_kafka_topics:
+    enabled: yes
+# default_kafka_topics:
 ## Create a test topic with retention.ms set
 #  - name: test_topic
 #    config:
