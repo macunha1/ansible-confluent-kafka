@@ -29,13 +29,6 @@ This Ansible Role aims to install and configure Apache Kafka and Apache Zookeepe
 All configurations can be passed through vars, you can see the list of necessary
 vars at [defaults](defaults/main.yaml) and customize them as you wish.
 
-The requirements include [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java),
-but you can use any other Java role. If, for example, ansiblebit.oracle-java
-isn't working for some reason (mainly the Oracle website crawling for Java 8).
-
-It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8) or Java 11.
-BUT, IF for some reason you would like to run it with another JDK, like OpenJDK, just go ahead (at your own risk).
-
 ## Getting Started
 
 ### Prerequisites
@@ -49,7 +42,9 @@ pip install ansible>=2.2.0
 After installing Ansible, you must install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name),
 and use it in your playbook. Kafka needs a JVM to run.
 
-Which can be easily done through:
+It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8) or Java 11.
+
+Requirements includes [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java), which can be easily installed through:
 
 ```shell
 ansible-galaxy install -r requirements.yaml
@@ -72,7 +67,7 @@ For further information on the Docker images being used to run containers on the
 | Debian |    Debian    |   8 (Jessie)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Debian    |  9 (Stretch)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Debian    |  10 (Buster)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| RedHat |    Fedora    |    25 Cloud    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
+| RedHat |    Fedora    |    27 Cloud    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Ubuntu    | 16.04 (Xenial) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Ubuntu    | 18.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
 | Debian |    Ubuntu    | 20.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
@@ -93,7 +88,6 @@ For further information on the Docker images being used to run containers on the
     confluent_version: "5.4.0"
     scala_version: "2.12"
     confluent_distribution: "confluent-community"
-    confluent_url: "http://packages.confluent.io/archive/{{ confluent_version[:3] }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
     log_basepath: "/var/log"
     data_basepath: "/var/data"
     initscripts_path: "/usr/sbin"
@@ -128,20 +122,18 @@ For further information on the Docker images being used to run containers on the
 192.168.50.3
 ```
 
-## Feedback and further development
-
-If this role didn't work for you, or if you found some bug during the execution,
-let me know. 
-
-Feel free to open a [feature request, an issue](https://github.com/macunha1/confluent-kafka-role/issues), or to send me a Pull request, I will be happy to colaborate.
-
 ## Built With
 
 - [Ansible](https://www.ansible.com/) - Simple IT Automation
 - [Confluent Kafka Package](https://www.confluent.io/) - Kafka for the Enterprise
 
-## Authors
+## Contribute
 
-- [**Matheus Cunha** ](https://github.com/macunha1)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-See also the list of [contributors](https://github.com/macunha1/confluent-kafka-role/contributors) who participated in this project.
+- Feel free to fill [an issue with feature request(s)](https://github.com/macunha1/confluent-kafka-role/issues), or to send me a Pull request, I will be happy to collaborate.
+- If this role didn't work for you, or if you found some bug during the execution, let me know.
+
+Thanks to these amazing contributors for making this role better
+
+[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/0)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/0)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/1)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/1)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/2)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/2)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/3)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/3)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/4)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/4)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/5)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/5)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/6)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/6)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/7)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/7)
