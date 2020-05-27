@@ -145,6 +145,8 @@ zookeeper_services:
 #  - name: test_topic_2
 ## Create a 3rd test topic with compression.type and file.delete.delay.ms set
 #  - name: test_topic_3
+#    partitions: 24
+#    replication_factor: 2
 #    config:
 #       - item: compression.type
 #         value: zip
