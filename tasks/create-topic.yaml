@@ -1,5 +1,13 @@
 ---
 
+- name: Kafka Topics | Calculate replication-factor and partitions
+  set_fact:
+    kafka_params:
+      - "--replication-factor {{ kafka_topic.replication_factor | default(default_replication_factor) }}"
+      - "--partitions {{ kafka_topic.partitions | default(groups['kafka'] | length) }}"
+  tags:
+    - create
+
 - name: Kafka Topics | Create a new partitioned topic on Kafka
   command: >
     {{ kafka_bins }}/kafka-topics
