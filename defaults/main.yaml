@@ -138,6 +138,7 @@ zookeeper_services:
 # default_kafka_topics:
 ## Create a test topic with retention.ms set
 #  - name: test_topic
+#    state: present # optional defaults to true
 #    config:
 #       - item: retention.ms
 #         value: 3600000
@@ -152,3 +153,6 @@ zookeeper_services:
 #         value: zip
 #       - item: file.delete.delay.ms
 #         value: 30000
+## Ensure our topic does no longer exist if it is in the topic list
+#  - name: unused_topic
+#    state: absent

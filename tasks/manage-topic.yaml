@@ -5,6 +5,7 @@
     kafka_params:
       - "--replication-factor {{ kafka_topic.replication_factor | default(default_replication_factor) }}"
       - "--partitions {{ kafka_topic.partitions | default(groups['kafka'] | length) }}"
+  run_once: yes
   tags:
     - create
 
@@ -16,9 +17,24 @@
     --create
     --topic {{ kafka_topic.name }}
   run_once: yes
-  when: kafka_topic.name in topics_to_create
+  when:
+    - kafka_topic.name in topics_to_create
+    - kafka_topic.state | default("present") == 'present'
   tags:
     - create
+
+- name: Kafka Topics | Delete topic from Kafka if it exists
+  command: >
+    {{ kafka_bins }}/kafka-topics
+    --zookeeper {{ random_zookeeper }}
+    --delete
+    --topic {{ kafka_topic.name }}
+  run_once: yes
+  when:
+    - kafka_topic.name in kafka_topics_result.stdout_lines
+    - kafka_topic.state | default("present") == 'absent'
+  tags:
+    - delete
 
 - name: "Kafka Topics | Set topic config options "
   command: >
@@ -31,6 +47,8 @@
   loop: "{{ kafka_topic.config }}"
   loop_control:
     loop_var: topic_config
-  when: kafka_topic.config is defined
+  when:
+    - kafka_topic.config is defined
+    - kafka_topic.state | default("present") == 'present'
   tags:
     - create

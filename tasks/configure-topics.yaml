@@ -13,6 +13,7 @@
   register: kafka_topics_result
   tags:
     - create
+    - delete
 
 - name: Set Topic Difference Fact
   set_fact:
@@ -23,7 +24,7 @@
       difference(kafka_topics_result.stdout_lines) }}
 
 - name: Kafka Topics | Create and Configure Topics
-  include_tasks: create-topic.yaml
+  include_tasks: manage-topic.yaml
   loop: "{{ default_kafka_topics }}"
   loop_control:
     loop_var: kafka_topic
