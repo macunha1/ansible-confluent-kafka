@@ -22,14 +22,6 @@
       list |
       difference(kafka_topics_result.stdout_lines) }}
 
-- name: Kafka Topics | Calculate replication-factor and partitions
-  set_fact:
-    kafka_params:
-      - "--replication-factor {{ default_replication_factor }}"
-      - "--partitions {{ groups['kafka'] | length }}"
-  tags:
-    - create
-
 - name: Kafka Topics | Create and Configure Topics
   include_tasks: create-topic.yaml
   loop: "{{ default_kafka_topics }}"
