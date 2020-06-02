@@ -1,0 +1,14 @@
+---
+- name: Installation | Create configuration directory
+  file:
+    path: "{{ conf_dest }}"
+    state: directory
+    force: yes
+
+- name: Installation | Change configuration directory ownership
+  file:
+    path: "{{ conf_dest }}"
+    owner: kafka
+    group: "{{ kafka_system_users.group }}"
+    force: yes
+  when: kafka_system_users.enabled
