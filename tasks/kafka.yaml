@@ -7,7 +7,7 @@
 - name: System Users | Change config file ownership
   file:
     path: "{{ conf_dest }}/kafka.properties"
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
   when: kafka_system_users.enabled
 

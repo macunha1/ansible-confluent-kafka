@@ -14,7 +14,7 @@
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
     mode: 0751
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
   with_items: "{{ confluent_services }}"
   when: kafka_system_users.enabled
