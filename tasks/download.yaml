@@ -39,7 +39,7 @@
       file:
         path: "{{ dst_path }}"
         mode: 0775
-        owner: kafka
+        owner: "{{ confluent_services | first }}"
         group: "{{ kafka_system_users.group }}"
       when: kafka_system_users.enabled
 

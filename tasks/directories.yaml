@@ -8,7 +8,7 @@
 - name: Installation | Change configuration directory ownership
   file:
     path: "{{ conf_dest }}"
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
     force: yes
   when: kafka_system_users.enabled
