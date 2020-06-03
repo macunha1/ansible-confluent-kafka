@@ -8,7 +8,7 @@
   file:
     path: "{{ ssl.path }}"
     state: directory
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
     mode: 0600
   when: kafka_system_users.enabled
@@ -22,7 +22,7 @@
 - name: System Users | Change certs and keys ownership
   file:
     path: "{{ ssl.path }}"
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
     mode: 0600
   with_items: "{{ jkstores }}"
@@ -39,7 +39,7 @@
 - name: System Users | Change services ownership
   file:
     path: "{{ conf_dest }}/{{ item }}"
-    owner: kafka
+    owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
     mode: 0644
   with_items: "{{ templates }}"
