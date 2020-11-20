@@ -63,7 +63,10 @@ ion_timeout_ms: 6000
 confluent_support_metrics_enable: yes
 confluent_support_customer_id: "anonymous"
 auto_create_topics: no
-default_replication_factor: "{{ kafka_group | length | root | int }}"
+default_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
+offsets_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
+min_insync_replicas: 1
+
 
 ssl:
   path: /var/private/ssl
