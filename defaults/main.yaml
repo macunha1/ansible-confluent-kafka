@@ -63,7 +63,7 @@ ion_timeout_ms: 6000
 confluent_support_metrics_enable: yes
 confluent_support_customer_id: "anonymous"
 auto_create_topics: no
-default_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
+default_replication_factor: 1
 offsets_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
 min_insync_replicas: 1
 
