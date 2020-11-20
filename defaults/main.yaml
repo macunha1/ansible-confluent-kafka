@@ -67,7 +67,6 @@ default_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
 offsets_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
 min_insync_replicas: 1
 
-
 ssl:
   path: /var/private/ssl
 
