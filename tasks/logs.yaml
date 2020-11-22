@@ -3,6 +3,7 @@
   file:
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
+    mode: 0644
   with_items: "{{ confluent_services }}"
   tags:
     - service
@@ -13,7 +14,7 @@
   file:
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
-    mode: 0751
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
   with_items: "{{ confluent_services }}"

@@ -27,6 +27,7 @@
       copy:
         src: "/tmp/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
         dest: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
+        mode: 0644
 
   always:
     - name: Confluent | Unarchive package
@@ -38,9 +39,9 @@
     - name: System Users | Change unarchived package ownership
       file:
         path: "{{ dst_path }}"
-        mode: 0775
         owner: "{{ confluent_services | first }}"
         group: "{{ kafka_system_users.group }}"
+        mode: "{{ kafka_system_users.permissions.directory_mode }}"
       when: kafka_system_users.enabled
 
     - name: Confluent | Remove archived package

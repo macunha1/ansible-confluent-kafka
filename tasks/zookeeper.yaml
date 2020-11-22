@@ -4,7 +4,7 @@
     path: "{{ zookeeper_data_dir }}"
     state: directory
     force: yes
-    mode: 0766
+    mode: 0755
   become: yes
   tags:
     - service
@@ -16,6 +16,7 @@
     path: "{{ zookeeper_data_dir }}"
     owner: zookeeper
     group: "{{ kafka_system_users.group }}"
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
   become: yes
   when: kafka_system_users.enabled
   tags:
@@ -27,6 +28,7 @@
   template:
     src: "{{ item.template }}"
     dest: "{{ item.dest }}/{{ item.name }}"
+    mode: 0644
   with_items:
     - template: "zookeeper.properties.j2"
       name: "zookeeper.properties"
@@ -44,7 +46,7 @@
     path: "{{ item }}"
     owner: zookeeper
     group: "{{ kafka_system_users.group }}"
-    mode: 0640
+    mode: "{{ kafka_system_users.permissions.file_mode }}"
   loop:
     - "{{ conf_dest }}/zookeeper.properties"
     - "{{ zookeeper_data_dir }}/myid"

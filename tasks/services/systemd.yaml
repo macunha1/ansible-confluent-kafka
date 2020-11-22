@@ -23,13 +23,14 @@
       template:
         src: kafka-jvm.sh.j2
         dest: /etc/profile.d/kafka-jvm.sh
+        mode: 0755
         force: yes
 
     - name: System Users | Change environment file ownership
       file:
         path: /etc/profile.d/kafka-jvm.sh
         owner: "kafka"
-        mode: 0751
+        mode: "{{ kafka_system_users.permissions.directory_mode }}"
         group: "{{ kafka_system_users.group }}"
         force: yes
       when:

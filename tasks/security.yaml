@@ -3,6 +3,7 @@
   file:
     path: "{{ ssl.path }}"
     state: directory
+    mode: 0600
 
 - name: "System Users | Change {{ ssl.path }} ownership"
   file:
@@ -10,13 +11,14 @@
     state: directory
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
-    mode: 0600
+    mode: 0400
   when: kafka_system_users.enabled
 
 - name: TLS | Copy certs and keys from Ansible Vault
   copy:
     src: "{{ local.files }}/{{ item }}"
     dest: "{{ ssl.path }}"
+    mode: 0400
   with_items: "{{ jkstores }}"
 
 - name: System Users | Change certs and keys ownership
@@ -24,7 +26,7 @@
     path: "{{ ssl.path }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
-    mode: 0600
+    mode: 0400
   with_items: "{{ jkstores }}"
   when: kafka_system_users.enabled
 
@@ -32,6 +34,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ conf_dest }}/{{ item }}"
+    mode: 0400
     force: yes
   with_items: "{{ templates }}"
   notify: restart {{ service }}
@@ -41,6 +44,6 @@
     path: "{{ conf_dest }}/{{ item }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
-    mode: 0644
+    mode: "{{ kafka_system_users.permissions.file_mode }}"
   with_items: "{{ templates }}"
   when: kafka_system_users.enabled
