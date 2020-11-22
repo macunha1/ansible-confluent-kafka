@@ -17,6 +17,9 @@ kafka_group: >-
 kafka_system_users:
   enabled: yes
   group: wheel
+  permissions:
+    directory_mode: "0750"
+    file_mode: "0640"
   include_to_sudoers: yes
 
 dst_path: "/opt"

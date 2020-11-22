@@ -83,9 +83,9 @@ workflows:
               only:
                 - master
     jobs:
+      - ansible-lint
       - test-alpine3
       - test-centos7
       - test-debian9
       - test-debian10
-      - test-ubuntu16
       - test-ubuntu20

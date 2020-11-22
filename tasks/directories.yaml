@@ -3,6 +3,7 @@
   file:
     path: "{{ conf_dest }}"
     state: directory
+    mode: 0755
     force: yes
 
 - name: Installation | Change configuration directory ownership
@@ -10,5 +11,6 @@
     path: "{{ conf_dest }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
     force: yes
   when: kafka_system_users.enabled
