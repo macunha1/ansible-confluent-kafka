@@ -86,6 +86,6 @@ workflows:
       - ansible-lint
       - test-alpine3
       - test-centos7
-      - test-debian9
+      - test-ubuntu16
       - test-debian10
       - test-ubuntu20
