@@ -38,10 +38,6 @@ jobs:
     docker:
       - image: macunha1/ansible:java-debian-10
     <<: *defaults
-  test-fedora27:
-    docker:
-      - image: ansible/ansible:fedora27
-    <<: *defaults
   test-ubuntu16:
     docker:
       - image: macunha1/ansible:java-ubuntu-16.04
@@ -70,10 +66,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - test-alpine3
-      - test-centos7
-      - test-ubuntu20
       - ansible-lint
+      - test-centos7
   nightly:
     triggers:
       - schedule:
@@ -84,8 +78,4 @@ workflows:
                 - master
     jobs:
       - ansible-lint
-      - test-alpine3
       - test-centos7
-      - test-ubuntu16
-      - test-debian10
-      - test-ubuntu20
