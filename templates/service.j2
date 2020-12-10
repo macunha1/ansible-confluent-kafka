@@ -1,9 +1,11 @@
 #!/bin/bash
-{% if ansible_distribution == "Ubuntu" %}
+{% if ansible_service_mgr  == "sysvinit" %}
 ### BEGIN INIT INFO
 # Provides:          {{ item.value.file_name }}
 # Required-Start:    $all
+# Required-Stop:
 # Default-Start:     2 3 4 5
+# Default-Stop:
 ### END INIT INFO
 {% else %}
 # chkconfig: 2345 80 95

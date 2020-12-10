@@ -2,7 +2,7 @@
 
 export WORKDIR=$(cd $(dirname "$0") && pwd)
 
-DOCKER_TEST_IMAGE=macunha1/ansible:alpine-3.11.5
+DOCKER_TEST_IMAGE=macunha1/ansible:java-ubuntu-20.04
 CONTAINER_NAME="${WORKDIR##*/}-$(date +"%Y-%m-%d")"
 
 DOCKER_CONTAINER=$(docker ps -a -f "name=${CONTAINER_NAME}" \
@@ -34,6 +34,6 @@ assert() {
 
 	# docker stop $RUNNER
 } || {
-	echo "Tests are failing"
-	docker exec -it $RUNNER /bin/sh
+	echo "Tests are failing. To inspect run:"
+	echo "docker exec -it $RUNNER sh"
 }
