@@ -53,9 +53,9 @@
     state: link
     force: yes
   with_items:
-    - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
+    - src: "{{ log4j_logDir }}"
       dest: "{{ log_basepath }}/confluent"
-  when: create_link_confluent_dir
+  when: create_link_log_dir
   tags:
     - service
     - logs

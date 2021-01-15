@@ -37,7 +37,6 @@ log_basepath: "/var/log"
 data_basepath: "/var/data"
 initscripts_path: "/usr/sbin"
 conf_dest: "/etc/config"
-create_link_confluent_dir: yes
 
 # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
 oracle_java_set_as_default: yes
@@ -225,3 +224,6 @@ log4j_additivity_kafka_authorizerLogger: "false"
 #Service Vars
 env_var: ""
 timeoutStartSec: 90
+
+#Enable it to create a link of log4j_logDir in {{ log_basepath }}/confluent
+create_link_log_dir: yes
