@@ -224,4 +224,4 @@ log4j_additivity_kafka_authorizerLogger: "false"
 
 #Service Vars
 env_var: ""
-timeoutStartSec: 600
+timeoutStartSec: 90
