@@ -161,3 +161,62 @@ zookeeper_services:
 ## Ensure our topic does no longer exist if it is in the topic list
 #  - name: unused_topic
 #    state: absent
+
+#Log4J Vars
+log4j_logDir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
+
+log4j_rootLogger: "INFO, stdout, kafkaAppender"
+
+log4j_stdout_class: "org.apache.log4j.ConsoleAppender"
+
+log4j_kafkaAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_kafkaAppender_file: "{{ log4j_logDir }}/server.log"
+log4j_kafkaAppender_maxFileSize: "1KB"
+log4j_kafkaAppender_maxBackupIndex: "2"
+
+log4j_stateChangeAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_stateChangeAppender_file: "{{ log4j_logDir }}/state-change.log"
+log4j_stateChangeAppender_maxFileSize: "1KB"
+log4j_stateChangeAppender_maxBackupIndex: "2"
+
+log4j_requestAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_requestAppender_file: "{{ log4j_logDir }}/kafka-request.log"
+log4j_requestAppender_maxFileSize: "1KB"
+log4j_requestAppender_maxBackupIndex: "2"
+
+log4j_cleanerAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_cleanerAppender_file: "{{ log4j_logDir }}/log-cleaner.log"
+log4j_cleanerAppender_maxFileSize: "1KB"
+log4j_cleanerAppender_maxBackupIndex: "2"
+
+log4j_controllerAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_controllerAppender_file: "{{ log4j_logDir }}/controller.log"
+log4j_controllerAppender_maxFileSize: "1KB"
+log4j_controllerAppender_maxBackupIndex: "2"
+
+log4j_authorizerAppender_class: "org.apache.log4j.RollingFileAppender"
+log4j_authorizerAppender_file: "{{ log4j_logDir }}/kafka-authorizer.log"
+log4j_authorizerAppender_maxFileSize: "1KB"
+log4j_authorizerAppender_maxBackupIndex: "2"
+
+log4j_logger_zookeeper: "INFO"
+log4j_logger_kafka_serverLog: "INFO"
+log4j_logger_kafka_stdout: "INFO"
+
+log4j_logger_kafka_requestLogger: "WARN, requestAppender"
+log4j_additivity_kafka_requestLogger: "false"
+
+log4j_logger_kafka_networkRequestChannel: "WARN, requestAppender"
+log4j_additivity_kafka_networkRequestChannel: "false"
+
+log4j_logger_kafka_controller: "TRACE, controllerAppender"
+log4j_additivity_kafka_controller: "false"
+
+log4j_logger_kafka_logCleaner: "INFO, cleanerAppender"
+log4j_additivity_kafka_logCleaner: "false"
+
+log4j_logger_kafka_stateChangeLogger: "TRACE, stateChangeAppender"
+log4j_additivity_kafka_stateChangeLogger: "false"
+
+log4j_logger_kafka_authorizerLogger: "INFO, authorizerAppender"
+log4j_additivity_kafka_authorizerLogger: "false"
