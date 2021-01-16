@@ -162,7 +162,7 @@ zookeeper_services:
 #  - name: unused_topic
 #    state: absent
 
-#Log4J Vars
+# Log4J Vars
 log4j_logDir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
 
 log4j_rootLogger: "INFO, stdout, kafkaAppender"
@@ -221,9 +221,9 @@ log4j_additivity_kafka_stateChangeLogger: "false"
 log4j_logger_kafka_authorizerLogger: "INFO, authorizerAppender"
 log4j_additivity_kafka_authorizerLogger: "false"
 
-#Service Vars
+# Service Vars
 additional_profile_env_vars: ""
 timeoutStartSec: 90
 
-#Enable it to create a link of log4j_logDir in {{ log_basepath }}/confluent
+# Enable it to create a link of log4j_logDir in {{ log_basepath }}/confluent
 create_link_log_dir: yes
