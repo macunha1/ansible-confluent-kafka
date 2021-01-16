@@ -224,5 +224,5 @@ log4j_additivity_kafka_authorizer_logger: "false"
 # Service Vars
 timeoutStartSec: 90
 
-# Enable it to create a link of log4j_logDir in {{ log_basepath }}/confluent
+# Enable it to create a link of log4j_log_dir in {{ log_basepath }}/confluent
 create_link_log_dir: yes
