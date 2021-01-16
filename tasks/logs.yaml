@@ -24,6 +24,28 @@
     - logs
     - configuration
 
+- name: Log4J | Create config files
+  template:
+    src: "log4j.properties.j2"
+    dest: "{{ conf_dest }}/log4j.properties"
+    mode: 0644
+  tags:
+    - service
+    - logs
+    - configuration
+
+- name: System Users | Change Log4j config files ownership
+  file:
+    path: "{{ conf_dest }}/log4j.properties"
+    owner: "{{ confluent_services | first }}"
+    group: "{{ kafka_system_users.group }}"
+    mode: "{{ kafka_system_users.permissions.file_mode }}"
+  when: kafka_system_users.enabled
+  tags:
+    - service
+    - logs
+    - configuration
+
 - name: Logs | Create symlink from Confluent directory
   file:
     src: "{{ item.src }}"
@@ -31,8 +53,9 @@
     state: link
     force: yes
   with_items:
-    - src: "{{ dst_path }}/confluent-{{ confluent_version }}/logs/"
+    - src: "{{ log4j_log_dir }}"
       dest: "{{ log_basepath }}/confluent"
+  when: create_link_log_dir
   tags:
     - service
     - logs

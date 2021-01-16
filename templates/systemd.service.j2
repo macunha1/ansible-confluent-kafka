@@ -5,12 +5,15 @@ After=network.target
 [Service]
 Type=forking
 {% if groups['kafka'] is defined and inventory_hostname in groups['kafka'] %}
-EnvironmentFile=/etc/profile.d/kafka-jvm.sh
+EnvironmentFile=/etc/profile.d/kafka-env.sh
+{% endif %}
+{% if groups['zookeeper'] is defined and inventory_hostname in groups['zookeeper'] %}
+EnvironmentFile=/etc/profile.d/zookeeper-env.sh
 {% endif %}
 ExecStart={{ initscripts_path }}/{{ item.value.file_name }} start
 ExecStop={{ initscripts_path }}/{{ item.value.file_name }} stop
 ExecReload=/bin/kill -HUP $MAINPID
-# TimeoutStartSec=600
+TimeoutStartSec={{ timeoutStartSec }}
 KillMode=process
 Restart=on-failure
 RestartSec=120
