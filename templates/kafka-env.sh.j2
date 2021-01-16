@@ -4,4 +4,4 @@ KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGC
 KAFKA_HEAP_OPTS="-Xmx{{ memory_heapsize }}g -Xms{{ memory_heapsize }}g"
 {% endif %}
 KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:{{ conf_dest }}/log4j.properties"
-{{ env_var }}
+{{ additional_profile_env_vars | default(omit) }}
