@@ -18,27 +18,41 @@
   with_dict: "{{ services }}"
   when: kafka_system_users.enabled
 
-- block:
-    - name: JVM | Render environment file from kafka-jvm.sh template
-      template:
-        src: kafka-jvm.sh.j2
-        dest: /etc/profile.d/kafka-jvm.sh
-        mode: 0755
-        force: yes
-
-    - name: System Users | Change environment file ownership
-      file:
-        path: /etc/profile.d/kafka-jvm.sh
-        owner: "kafka"
-        mode: "{{ kafka_system_users.permissions.directory_mode }}"
-        group: "{{ kafka_system_users.group }}"
-        force: yes
-      when:
-        - kafka_system_users.enabled
-
+- name: System Users | Render environment file from template
+  template:
+    src: "{{ item.template }}"
+    dest: "/etc/profile.d/{{ item.name }}"
+    mode: 0755
+    force: yes
   when:
-    - groups['kafka'] is defined
-    - inventory_hostname in groups['kafka']
+    - item.group is defined
+    - inventory_hostname in item.group
+  with_items:
+    - template: "kafka-env.sh.j2"
+      name: "kafka-env.sh"
+      group: "{{ groups['kafka'] }}"
+    - template: "zookeeper-env.sh.j2"
+      name: "zookeeper-env.sh"
+      group: "{{ groups['zookeeper'] }}"
+
+- name: System Users | Change environment file ownership
+  file:
+    path: "/etc/profile.d/{{ item.name }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
+    group: "{{ kafka_system_users.group }}"
+    force: yes
+  when:
+    - kafka_system_users.enabled
+    - item.group is defined
+    - inventory_hostname in item.group
+  with_items:
+    - owner: "kafka"
+      name: "kafka-env.sh"
+      group: "{{ groups['kafka'] }}"
+    - owner: "zookeeper"
+      name: "zookeeper-env.sh"
+      group: "{{ groups['zookeeper'] }}"
 
 - name: Systemd | Create services unit
   become: yes
