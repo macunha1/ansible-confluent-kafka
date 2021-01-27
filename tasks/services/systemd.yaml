@@ -21,7 +21,7 @@
 - name: System Users | Render environment file from template
   template:
     src: "{{ item.template }}"
-    dest: "/etc/profile.d/{{ item.name }}"
+    dest: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
     mode: 0755
     force: yes
   when:
@@ -37,7 +37,7 @@
 
 - name: System Users | Change environment file ownership
   file:
-    path: "/etc/profile.d/{{ item.name }}"
+    path: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
     owner: "{{ item.owner }}"
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
     group: "{{ kafka_system_users.group }}"
