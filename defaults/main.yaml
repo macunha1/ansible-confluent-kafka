@@ -165,7 +165,7 @@ zookeeper_services:
 # Log4J Vars
 log4j_log_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
 
-log4j_root_logger: "INFO, stdout, kafkaAppender"
+log4j_root_logger_level: "INFO"
 
 log4j_stdout_class: "org.apache.log4j.ConsoleAppender"
 
@@ -199,26 +199,21 @@ log4j_authorizer_appender_file: "{{ log4j_log_dir }}/kafka-authorizer.log"
 log4j_authorizer_appender_max_file_size: "10MB"
 log4j_authorizer_appender_max_backup_index: "100"
 
-log4j_logger_zookeeper: "INFO"
-log4j_logger_kafka_server_log: "INFO"
-log4j_logger_kafka_stdout: "INFO"
+log4j_logger_zookeeper_level: "INFO"
+log4j_logger_kafka_server_log_level: "INFO"
+log4j_logger_kafka_stdout_level: "INFO"
+log4j_logger_kafka_request_logger_level: "WARN"
+log4j_logger_kafka_network_request_channel_level: "WARN"
+log4j_logger_kafka_controller_level: "TRACE"
+log4j_logger_kafka_log_cleaner_level: "INFO"
+log4j_logger_kafka_state_change_logger_level: "TRACE"
+log4j_logger_kafka_authorizer_logger_level: "INFO"
 
-log4j_logger_kafka_request_logger: "WARN, requestAppender"
 log4j_additivity_kafka_request_logger: "false"
-
-log4j_logger_kafka_network_request_channel: "WARN, requestAppender"
 log4j_additivity_kafka_network_request_channel: "false"
-
-log4j_logger_kafka_controller: "TRACE, controllerAppender"
 log4j_additivity_kafka_controller: "false"
-
-log4j_logger_kafka_log_cleaner: "INFO, cleanerAppender"
 log4j_additivity_kafka_log_cleaner: "false"
-
-log4j_logger_kafka_state_change_logger: "TRACE, stateChangeAppender"
 log4j_additivity_kafka_state_change_logger: "false"
-
-log4j_logger_kafka_authorizer_logger: "INFO, authorizerAppender"
 log4j_additivity_kafka_authorizer_logger: "false"
 
 # Service Vars

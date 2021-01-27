@@ -15,7 +15,7 @@
 
 # Unspecified loggers and loggers with additivity=true output to server.log and stdout
 # Note that INFO only applies to unspecified loggers, the log level of the child logger is used otherwise
-log4j.rootLogger={{ log4j_root_logger }}
+log4j.rootLogger={{ log4j_root_logger_level }}, stdout, kafkaAppender
 
 log4j.appender.stdout= {{ log4j_stdout_class }}
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
@@ -64,14 +64,14 @@ log4j.appender.authorizerAppender.MaxFileSize={{ log4j_authorizer_appender_max_f
 log4j.appender.authorizerAppender.MaxBackupIndex={{ log4j_authorizer_appender_max_backup_index }}
 
 # Change the line below to adjust ZK client logging
-log4j.logger.org.apache.zookeeper={{ log4j_logger_zookeeper }}
+log4j.logger.org.apache.zookeeper={{ log4j_logger_zookeeper_level }}
 
 # Change the two lines below to adjust the general broker logging level (output to server.log and stdout)
-log4j.logger.kafka={{ log4j_logger_kafka_server_log }}
-log4j.logger.org.apache.kafka={{ log4j_logger_kafka_stdout }}
+log4j.logger.kafka={{ log4j_logger_kafka_server_log_level }}
+log4j.logger.org.apache.kafka={{ log4j_logger_kafka_stdout_level }}
 
 # Change to DEBUG or TRACE to enable request logging
-log4j.logger.kafka.request.logger={{ log4j_logger_kafka_request_logger }}
+log4j.logger.kafka.request.logger={{ log4j_logger_kafka_request_logger_level }}, requestAppender
 log4j.additivity.kafka.request.logger={{ log4j_additivity_kafka_request_logger }}
 
 # Uncomment the lines below and change log4j.logger.kafka.network.RequestChannel$ to TRACE for additional output
@@ -79,18 +79,18 @@ log4j.additivity.kafka.request.logger={{ log4j_additivity_kafka_request_logger }
 #log4j.logger.kafka.network.Processor=TRACE, requestAppender
 #log4j.logger.kafka.server.KafkaApis=TRACE, requestAppender
 #log4j.additivity.kafka.server.KafkaApis=false
-log4j.logger.kafka.network.RequestChannel$={{ log4j_logger_kafka_network_request_channel }}
+log4j.logger.kafka.network.RequestChannel$={{ log4j_logger_kafka_network_request_channel_level }}, requestAppender
 log4j.additivity.kafka.network.RequestChannel$={{ log4j_additivity_kafka_network_request_channel }}
 
-log4j.logger.kafka.controller={{ log4j_logger_kafka_controller }}
+log4j.logger.kafka.controller={{ log4j_logger_kafka_controller_level }}, controllerAppender
 log4j.additivity.kafka.controller={{ log4j_additivity_kafka_controller }}
 
-log4j.logger.kafka.log.LogCleaner={{ log4j_logger_kafka_log_cleaner }}
+log4j.logger.kafka.log.LogCleaner={{ log4j_logger_kafka_log_cleaner_level }}, cleanerAppender
 log4j.additivity.kafka.log.LogCleaner={{ log4j_additivity_kafka_log_cleaner }}
 
-log4j.logger.state.change.logger={{ log4j_logger_kafka_state_change_logger }}
+log4j.logger.state.change.logger={{ log4j_logger_kafka_state_change_logger_level }}, stateChangeAppender
 log4j.additivity.state.change.logger={{ log4j_additivity_kafka_state_change_logger }}
 
 # Access denials are logged at INFO level, change to DEBUG to also log allowed accesses
-log4j.logger.kafka.authorizer.logger={{ log4j_logger_kafka_authorizer_logger }}
+log4j.logger.kafka.authorizer.logger={{ log4j_logger_kafka_authorizer_logger_level }}, authorizerAppender
 log4j.additivity.kafka.authorizer.logger={{ log4j_additivity_kafka_authorizer_logger }}
