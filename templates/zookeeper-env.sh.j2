@@ -1,4 +1,6 @@
+{% if (zookeeper_max_memory_heapsize_with_units|human_to_bytes) > ('1G'|human_to_bytes) %}
 KAFKA_HEAP_OPTS="-Xmx{{ zookeeper_max_memory_heapsize_with_units }} -Xms{{ zookeeper_init_memory_heapsize_with_units }}"
+{% endif %}
 KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:{{ conf_dest }}/log4j.properties"
 KAFKA_GC_LOG_OPTS="{{ zookeeper_gc_logger_enabled_opts if zookeeper_gc_logger_enabled else zookeeper_gc_logger_disabled_opts }}"
 {{ additional_profile_env_vars | default(omit) }}
