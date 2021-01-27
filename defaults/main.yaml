@@ -104,6 +104,17 @@ zookeeper_init_limit: 5
 zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
 
+# Zookeeper Garbage Collection Logging
+zookeeper_gc_logger_enabled: true
+zookeeper_gc_logger_name: "{{ log4j_log_dir }}/zookeeper-gc.log"
+zookeeper_gc_logger_enable_opts: "-verbose:gc -Xloggc:{{ zookeeper_gc_logger_name }}"
+zookeeper_gc_logger_number_files: 10
+zookeeper_gc_logger_max_size: 10M
+zookeeper_gc_logger_rotation_opts: "-XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles={{ zookeeper_gc_logger_number_files }} -XX:GCLogFileSize={{ zookeeper_gc_logger_max_size }}"
+zookeeper_gc_logger_format_opts: "-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps"
+zookeeper_gc_logger_enabled_opts: "{{ zookeeper_gc_logger_enable_opts }} {{ zookeeper_gc_logger_rotation_opts }} {{ zookeeper_gc_logger_format_opts }}"
+zookeeper_gc_logger_disabled_opts: "-Dnogclog"
+
 ## Services
 kafka_services:
   kafka:
