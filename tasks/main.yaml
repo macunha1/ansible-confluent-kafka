@@ -31,12 +31,6 @@
     - installation
     - configuration
 
-- name: JVM | Tune heap sizes for Kafka
-  import_tasks: jvm-tuning.yaml
-  tags:
-    - tuning
-    - configuration
-
 - name: Logs | Including tasks
   import_tasks: "logs.yaml"
   tags:
