@@ -79,8 +79,8 @@ local:
 kafka_file_descriptor_limit: 100000
 kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
 
-kafka_init_memory_heapsize_with_units: 256M
-kafka_max_memory_heapsize_with_units: "{{(ansible_memtotal_mb/1024) | root | round | int }}G"
+kafka_init_memory_heapsize_with_units: 1G
+kafka_max_memory_heapsize_with_units: "{{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G' if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '1G' }}"
 
 ## Kafka SSL Vars
 kafka_security:
@@ -111,8 +111,8 @@ zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
 zookeeper_file_descriptor_limit: 100000
 zookeeper_env_file: "{{ confluent_kafka_env_file_path }}/zookeeper-env.sh"
-zookeeper_init_memory_heapsize_with_units: 256M
-zookeeper_max_memory_heapsize_with_units: "{{(ansible_memtotal_mb/1024) | root | round | int }}G"
+zookeeper_init_memory_heapsize_with_units: 512M
+zookeeper_max_memory_heapsize_with_units: "{{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G' if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '512M' }}"
 
 # Zookeeper Garbage Collection Logging
 zookeeper_gc_logger_enabled: true

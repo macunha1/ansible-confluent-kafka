@@ -1,6 +1,4 @@
 KAFKA_JVM_PERFORMANCE_OPTS="-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80 -Djava.awt.headless=true"
-{% if (kafka_max_memory_heapsize_with_units|human_to_bytes) > ('1G'|human_to_bytes) %}
 KAFKA_HEAP_OPTS="-Xmx{{ kafka_max_memory_heapsize_with_units }} -Xms{{ kafka_init_memory_heapsize_with_units }}"
-{% endif %}
 KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:{{ conf_dest }}/log4j.properties"
 {{ additional_profile_env_vars | default(omit) }}
