@@ -37,7 +37,7 @@
     - service
     - logs
     - configuration
-    
+
 - name: Kafka | Including tasks
   include_tasks: "kafka.yaml"
   when: inventory_hostname in kafka_group
