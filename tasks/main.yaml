@@ -31,6 +31,13 @@
     - installation
     - configuration
 
+- name: Logs | Including tasks
+  import_tasks: "logs.yaml"
+  tags:
+    - service
+    - logs
+    - configuration
+
 - name: Kafka | Including tasks
   include_tasks: "kafka.yaml"
   when: inventory_hostname in kafka_group
@@ -52,19 +59,6 @@
 #     service: kafka
 #   tags:
 #     - ssl
-
-- name: JVM | Tune heap sizes for Kafka
-  import_tasks: jvm-tuning.yaml
-  tags:
-    - tuning
-    - configuration
-
-- name: Logs | Including tasks
-  import_tasks: "logs.yaml"
-  tags:
-    - service
-    - logs
-    - configuration
 
 - name: Kafka | Configure and create default topics
   import_tasks: "configure-topics.yaml"
