@@ -76,6 +76,15 @@ ssl:
 local:
   files: ../files
 
+kafka_file_descriptor_limit: 100000
+kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
+
+kafka_init_memory_heapsize_with_units: 1G
+
+kafka_max_memory_heapsize_with_units: >
+  "{{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G' 
+  if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '1G' }}"
+
 ## Kafka SSL Vars
 kafka_security:
   server:
@@ -103,8 +112,32 @@ zookeeper_max_cnxns: 0
 zookeeper_init_limit: 5
 zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
+zookeeper_file_descriptor_limit: 100000
+zookeeper_env_file: "{{ confluent_kafka_env_file_path }}/zookeeper-env.sh"
+zookeeper_init_memory_heapsize_with_units: 512M
+zookeeper_max_memory_heapsize_with_units: >
+  "{{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G' 
+  if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '512M' }}"
+
+# Zookeeper Garbage Collection Logging
+zookeeper_gc_logger_enabled: true
+zookeeper_gc_logger_name: "{{ log4j_log_dir }}/zookeeper-gc.log"
+zookeeper_gc_logger_enable_opts: "-verbose:gc -Xloggc:{{ zookeeper_gc_logger_name }}"
+zookeeper_gc_logger_number_files: 10
+zookeeper_gc_logger_max_size: 10M
+zookeeper_gc_logger_rotation_opts: >
+  "-XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles={{ zookeeper_gc_logger_number_files }}
+   -XX:GCLogFileSize={{ zookeeper_gc_logger_max_size }}"
+zookeeper_gc_logger_format_opts: "-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps"
+zookeeper_gc_logger_enabled_opts: > 
+  "{{ zookeeper_gc_logger_enable_opts }} 
+  {{ zookeeper_gc_logger_rotation_opts }} 
+  {{ zookeeper_gc_logger_format_opts }}"
+zookeeper_gc_logger_disabled_opts: "-Dnogclog"
 
 ## Services
+confluent_kafka_env_file_path: "/etc/profile.d"
+
 kafka_services:
   kafka:
     file_name: "kafka"
@@ -115,6 +148,8 @@ kafka_services:
     daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
     state: "started"
     enabled: yes
+    limit_nofile: "{{ kafka_file_descriptor_limit }}"
+    environment_file: "{{ kafka_env_file }}"
 
   kafka-rest:
     file_name: "kafka-rest"
@@ -140,6 +175,9 @@ zookeeper_services:
       {{ conf_dest }}/zookeeper.properties
     state: "started"
     enabled: yes
+    limit_nofile: "{{ zookeeper_file_descriptor_limit }}"
+    environment_file: "{{ zookeeper_env_file }}"
+
 # default_kafka_topics:
 ## Create a test topic with retention.ms set
 #  - name: test_topic
@@ -165,7 +203,7 @@ zookeeper_services:
 # Log4J Vars
 log4j_log_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
 
-log4j_root_logger: "INFO, stdout, kafkaAppender"
+log4j_root_logger_level: "INFO"
 
 log4j_stdout_class: "org.apache.log4j.ConsoleAppender"
 
@@ -199,26 +237,21 @@ log4j_authorizer_appender_file: "{{ log4j_log_dir }}/kafka-authorizer.log"
 log4j_authorizer_appender_max_file_size: "10MB"
 log4j_authorizer_appender_max_backup_index: "100"
 
-log4j_logger_zookeeper: "INFO"
-log4j_logger_kafka_server_log: "INFO"
-log4j_logger_kafka_stdout: "INFO"
+log4j_logger_zookeeper_level: "INFO"
+log4j_logger_kafka_server_log_level: "INFO"
+log4j_logger_kafka_stdout_level: "INFO"
+log4j_logger_kafka_request_logger_level: "WARN"
+log4j_logger_kafka_network_request_channel_level: "WARN"
+log4j_logger_kafka_controller_level: "TRACE"
+log4j_logger_kafka_log_cleaner_level: "INFO"
+log4j_logger_kafka_state_change_logger_level: "TRACE"
+log4j_logger_kafka_authorizer_logger_level: "INFO"
 
-log4j_logger_kafka_request_logger: "WARN, requestAppender"
 log4j_additivity_kafka_request_logger: "false"
-
-log4j_logger_kafka_network_request_channel: "WARN, requestAppender"
 log4j_additivity_kafka_network_request_channel: "false"
-
-log4j_logger_kafka_controller: "TRACE, controllerAppender"
 log4j_additivity_kafka_controller: "false"
-
-log4j_logger_kafka_log_cleaner: "INFO, cleanerAppender"
 log4j_additivity_kafka_log_cleaner: "false"
-
-log4j_logger_kafka_state_change_logger: "TRACE, stateChangeAppender"
 log4j_additivity_kafka_state_change_logger: "false"
-
-log4j_logger_kafka_authorizer_logger: "INFO, authorizerAppender"
 log4j_additivity_kafka_authorizer_logger: "false"
 
 # Service Vars

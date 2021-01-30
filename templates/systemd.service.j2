@@ -4,11 +4,8 @@ After=network.target
 
 [Service]
 Type=forking
-{% if groups['kafka'] is defined and inventory_hostname in groups['kafka'] %}
-EnvironmentFile=/etc/profile.d/kafka-env.sh
-{% endif %}
-{% if groups['zookeeper'] is defined and inventory_hostname in groups['zookeeper'] %}
-EnvironmentFile=/etc/profile.d/zookeeper-env.sh
+{% if item.value.environment_file is defined %}
+EnvironmentFile={{ item.value.environment_file }}
 {% endif %}
 ExecStart={{ initscripts_path }}/{{ item.value.file_name }} start
 ExecStop={{ initscripts_path }}/{{ item.value.file_name }} stop
@@ -19,6 +16,9 @@ Restart=on-failure
 RestartSec=120
 RestartPreventExitStatus=255
 StartLimitBurst=0
+{% if item.value.limit_nofile is defined %}
+LimitNOFILE={{ item.value.limit_nofile }}
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target
