@@ -77,7 +77,7 @@ local:
   files: ../files
 
 kafka_file_descriptor_limit: 100000
-kafka_noproc_limit: 65536
+kafka_nproc_limit: 65536
 
 kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
 
@@ -115,7 +115,7 @@ zookeeper_init_limit: 5
 zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
 zookeeper_file_descriptor_limit: 100000
-zookeeper_noproc_limit: 65536
+zookeeper_nproc_limit: 65536
 zookeeper_env_file: "{{ confluent_kafka_env_file_path }}/zookeeper-env.sh"
 zookeeper_init_memory_heapsize_with_units: 512M
 zookeeper_max_memory_heapsize_with_units: >-
@@ -152,7 +152,7 @@ kafka_services:
     state: "started"
     enabled: yes
     limit_nofile: "{{ kafka_file_descriptor_limit }}"
-    limit_nproc: "{{ kafka_noproc_limit }}"
+    limit_nproc: "{{ kafka_nproc_limit }}"
     environment_file: "{{ kafka_env_file }}"
 
   kafka-rest:
@@ -180,7 +180,7 @@ zookeeper_services:
     state: "started"
     enabled: yes
     limit_nofile: "{{ zookeeper_file_descriptor_limit }}"
-    limit_nproc: "{{ zookeeper_noproc_limit }}"
+    limit_nproc: "{{ zookeeper_nproc_limit }}"
     environment_file: "{{ zookeeper_env_file }}"
 
 # default_kafka_topics:
