@@ -19,6 +19,9 @@ StartLimitBurst=0
 {% if item.value.limit_nofile is defined %}
 LimitNOFILE={{ item.value.limit_nofile }}
 {% endif %}
+{% if item.value.limit_nproc is defined %}
+LimitNPROC={{ item.value.limit_nproc }}
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target
