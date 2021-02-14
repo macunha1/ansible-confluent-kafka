@@ -3,10 +3,10 @@
 <p align="center">
     <a href="https://circleci.com/gh/macunha1/confluent-kafka-role" alt="CircleCI build">
         <img src="https://img.shields.io/circleci/build/github/macunha1/confluent-kafka-role" /></a>
-    <a href="https://galaxy.ansible.com/macunha1/confluent-kafka" alt="Ansible Quality Score">
-        <img src="https://img.shields.io/ansible/quality/24090" /></a>
-    <a href="https://galaxy.ansible.com/macunha1/confluent-kafka" alt="Role Downloads">
-        <img src="https://img.shields.io/ansible/role/d/24090" /></a>
+    <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Ansible Quality Score">
+        <img src="https://img.shields.io/ansible/quality/53108" /></a>
+    <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Role Downloads">
+        <img src="https://img.shields.io/ansible/role/d/53108" /></a>
 </p>
 
 <p align="center">
@@ -98,7 +98,7 @@ For further information on the Docker images being used to run containers on the
 
   roles:
     - ansiblebit.oracle-java
-    - macunha1.confluent-kafka
+    - macunha1.confluent_kafka
 ```
 
 ### Minimal playbook
@@ -109,7 +109,7 @@ For further information on the Docker images being used to run containers on the
 
   roles:
     - ansiblebit.oracle-java
-    - macunha1.confluent-kafka
+    - macunha1.confluent_kafka
 ```
 
 ### Example inventory

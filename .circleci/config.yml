@@ -10,7 +10,7 @@ defaults: &defaults
           pip install ansible==2.9.6
 
           # ansible-galaxy install -r requirements.yaml
-          ansible-galaxy install macunha1.confluent-kafka
+          ansible-galaxy install macunha1.confluent_kafka
 
           # Check code style and syntax
           ansible-playbook -c local --syntax-check test.yaml
@@ -60,7 +60,7 @@ jobs:
           name: Ansible Lint
           command: |
             pip install ansible-lint -qq
-            ansible-lint .
+            ansible-lint -c .circleci/lint/ansible.yaml .
 
 workflows:
   version: 2

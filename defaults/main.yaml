@@ -123,7 +123,7 @@ zookeeper_max_memory_heapsize_with_units: >-
   if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '512M' }}
 
 # Zookeeper Garbage Collection Logging
-zookeeper_gc_logger_enabled: true
+zookeeper_gc_logger_enabled: yes
 zookeeper_gc_logger_name: "{{ log4j_log_dir }}/zookeeper-gc.log"
 zookeeper_gc_logger_enable_opts: "-verbose:gc -Xloggc:{{ zookeeper_gc_logger_name }}"
 zookeeper_gc_logger_number_files: 10
