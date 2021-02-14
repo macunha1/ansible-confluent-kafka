@@ -46,6 +46,21 @@ jobs:
     docker:
       - image: macunha1/ansible:java-ubuntu-20.04
     <<: *defaults
+
+  # Reach out to Ansible Galaxy API to import role
+  galaxy-import:
+    docker:
+      - image: macunha1/ansible:py3-alpine-3.11.5
+    steps:
+      - run:
+          name: Ansible Galaxy Import role
+          command: |
+            ansible-galaxy role import \
+              --api-key ${ANSIBLE_GALAXY_API_KEY} \
+              --branch master \
+              macunha1 confluent_kafka
+
+  # Executes YAML and Ansible code lint to check style
   ansible-lint:
     docker:
       - image: macunha1/ansible:py3-alpine-3.11.5
@@ -68,6 +83,10 @@ workflows:
     jobs:
       - ansible-lint
       - test-centos7
+      - galaxy-import:
+          requires:
+            - ansible-lint
+            - test-centos7
   nightly:
     triggers:
       - schedule:
@@ -79,3 +98,7 @@ workflows:
     jobs:
       - ansible-lint
       - test-centos7
+      - galaxy-import:
+          requires:
+            - ansible-lint
+            - test-centos7
