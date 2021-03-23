@@ -1,7 +1,8 @@
 ---
-- meta: flush_handlers
+- name: Handlers | Flush
+  meta: flush_handlers
 
-- name: restart kafka
+- name: Handlers | Restart Kafka Service
   become: yes
   service:
     name: kafka
