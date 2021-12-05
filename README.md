@@ -1,20 +1,22 @@
 <h1 align="center">Confluent Kafka Ansible Role</h1>
 
 <p align="center">
-    <a href="https://circleci.com/gh/macunha1/confluent-kafka-role" alt="CircleCI build">
-        <img src="https://img.shields.io/circleci/build/github/macunha1/confluent-kafka-role" /></a>
+    <a href="https://github.com/macunha1/confluent-kafka-role/actions" alt="CircleCI build">
+        <img src="https://img.shields.io/github/workflow/status/macunha1/confluent-kafka-role/Continuous%20Integration" alt="GitHub Workflow Status" >
+    </a>
     <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Ansible Quality Score">
-        <img src="https://img.shields.io/ansible/quality/53108" /></a>
+        <img src="https://img.shields.io/ansible/quality/53108" />
+    </a>
     <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Role Downloads">
-        <img src="https://img.shields.io/ansible/role/d/53108" /></a>
+        <img src="https://img.shields.io/ansible/role/d/53108" />
+    </a>
 </p>
 
 <p align="center">
-    <img src="http://img.shields.io/badge/platform-centos-00ff7f.svg?style=flat" />
     <img src="http://img.shields.io/badge/platform-debian-a80030.svg?style=flat" />
     <img src="http://img.shields.io/badge/platform-fedora-4592fb.svg?style=flat" />
-    <img src="http://img.shields.io/badge/platform-redhat-cc0000.svg?style=flat" />
     <img src="http://img.shields.io/badge/platform-ubuntu-dd4814.svg?style=flat" />
+    <img src="http://img.shields.io/badge/platform-redhat-cc0000.svg?style=flat" />
 </p>
 
 <p align="center">
@@ -52,27 +54,14 @@ ansible-galaxy install -r requirements.yaml
 
 ## Tests
 
-The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.circleci/config.yaml#L8)),
-inside Docker containers running both major Python versions (2 and 3).
+The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.github/workflows/ci.yaml)),
+inside Docker containers running Ansible on Python 3, using Open JDK for the
+sake of testing.
+
+If you are curious about the status, there is a scheduled job that runs every
+day, take a look at the GitHub Actions build history ;)
 
 For further information on the Docker images being used to run containers on the CI, take a look at [docker-ansible](https://github.com/macunha1/docker-ansible/)
-
-<div align="center">
-
-| Family | Distribution |    Version     |                                   Test Status                                   |
-| :----: | :----------: | :------------: | :-----------------------------------------------------------------------------: |
-| Alpine | Alpine Linux |      3.8+      | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| RedHat |    CentOS    |       6        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| RedHat |    CentOS    |       7        | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Debian    |   8 (Jessie)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Debian    |  9 (Stretch)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Debian    |  10 (Buster)   | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| RedHat |    Fedora    |    27 Cloud    | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Ubuntu    | 16.04 (Xenial) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Ubuntu    | 18.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-| Debian |    Ubuntu    | 20.04 (Bionic) | [![x86_64](http://img.shields.io/badge/x86_64-passed-006400.svg?style=flat)](#) |
-
-</div>
 
 ## Quickstart
 
@@ -122,18 +111,13 @@ For further information on the Docker images being used to run containers on the
 192.168.50.3
 ```
 
-## Built With
-
-- [Ansible](https://www.ansible.com/) - Simple IT Automation
-- [Confluent Kafka Package](https://www.confluent.io/) - Kafka for the Enterprise
-
 ## Contribute
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-- Feel free to fill [an issue with feature request(s)](https://github.com/macunha1/confluent-kafka-role/issues), or to send me a Pull request, I will be happy to collaborate.
-- If this role didn't work for you, or if you found some bug during the execution, let me know.
+Feel free to fill [an issue](https://github.com/macunha1/ansible-github-actions-runner/issues)
+containing feature request(s), or (even better) to send me a Pull request, I
+would be happy to collaborate with you.
 
-Thanks to these amazing contributors for making this role better
-
-[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/0)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/0)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/1)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/1)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/2)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/2)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/3)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/3)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/4)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/4)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/5)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/5)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/6)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/6)[![](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/images/7)](https://sourcerer.io/fame/macunha1/macunha1/confluent-kafka-role/links/7)
+If this role didn't work for you, or if you found some bug during the execution,
+let me know.

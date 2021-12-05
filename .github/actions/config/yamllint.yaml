@@ -43,5 +43,7 @@ rules:
   truthy:
     allowed-values:
       - !!str yes
+      - !!str true
       - !!str no
+      - !!str false
     level: warning
