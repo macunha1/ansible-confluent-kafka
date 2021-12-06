@@ -1,8 +1,8 @@
 <h1 align="center">Confluent Kafka Ansible Role</h1>
 
 <p align="center">
-    <a href="https://github.com/macunha1/confluent-kafka-role/actions" alt="CircleCI build">
-        <img src="https://img.shields.io/github/workflow/status/macunha1/confluent-kafka-role/Continuous%20Integration" alt="GitHub Workflow Status" >
+    <a href="https://github.com/macunha1/ansible-confluent-kafka/actions" alt="GitHub Actions build">
+        <img src="https://img.shields.io/github/workflow/status/macunha1/ansible-confluent-kafka/Continuous%20Integration" alt="GitHub Workflow Status" >
     </a>
     <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Ansible Quality Score">
         <img src="https://img.shields.io/ansible/quality/53108" />
@@ -20,10 +20,10 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/macunha1/confluent-kafka-role/pulls" alt="GitHub pull requests">
-        <img src="https://img.shields.io/github/issues-pr-raw/macunha1/confluent-kafka-role"></a>
-    <a href="https://github.com/macunha1/confluent-kafka-role/issues" alt="GitHub issues">
-        <img src="https://img.shields.io/github/issues-raw/macunha1/confluent-kafka-role"></a>
+    <a href="https://github.com/macunha1/ansible-confluent-kafka/pulls" alt="GitHub pull requests">
+        <img src="https://img.shields.io/github/issues-pr-raw/macunha1/ansible-confluent-kafka"></a>
+    <a href="https://github.com/macunha1/ansible-confluent-kafka/issues" alt="GitHub issues">
+        <img src="https://img.shields.io/github/issues-raw/macunha1/ansible-confluent-kafka"></a>
 </p>
 
 This Ansible Role aims to install and configure Apache Kafka and Apache Zookeeper using the [Confluent package](https://www.confluent.io).

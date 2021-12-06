@@ -17,10 +17,9 @@ jobs:
       matrix:
         ansible-image:
           - macunha1/ansible:centos-7
-          # TODO: Re-introduce images/tags once the Docker image is update with
-          # systemd.
+          # TODO: Make the CI work on those images again.
           # - macunha1/ansible:java-alpine-3.11.5
-          # - macunha1/ansible:java-debian-9
+          # - macunha1/ansible:java-debian-10
 
     steps:
       - uses: actions/checkout@v2
