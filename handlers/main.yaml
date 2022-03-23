@@ -1,10 +1,10 @@
 ---
 - name: Handlers | Flush
-  meta: flush_handlers
+  meta: flush_handlers # noqa fqcn-builtins
 
 - name: Handlers | Restart Kafka Service
   become: yes
-  service:
+  ansible.builtin.service:
     name: kafka
     state: "{{ item }}"
   with_items:

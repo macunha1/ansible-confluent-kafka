@@ -1,6 +1,6 @@
 ---
 - name: Confluent | Check if there's an unarchived package
-  stat:
+  ansible.builtin.stat:
     path: "{{ dst_path }}/confluent-{{ confluent_version }}"
   register: unarchived_confluent_package
   tags:

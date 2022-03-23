@@ -1,12 +1,12 @@
 ---
 - name: Kafka Topics | Choose a random Zookeeper host to make requests
-  set_fact:
+  ansible.builtin.set_fact:
     random_zookeeper: >-
       {{ hostvars.get(item).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
   with_random_choice: "{{ zookeeper_group }}"
 
 - name: Kafka Topics | List topics
-  command: >-
+  ansible.builtin.command: >-
     {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }} --list
   run_once: yes
   changed_when: no
@@ -16,7 +16,7 @@
     - delete
 
 - name: Set Topic Difference Fact
-  set_fact:
+  ansible.builtin.set_fact:
     topics_to_create: >-
       {{ default_kafka_topics |
       map(attribute='name') |

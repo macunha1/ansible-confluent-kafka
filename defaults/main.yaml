@@ -215,7 +215,7 @@ log4j_stdout_class: "org.apache.log4j.ConsoleAppender"
 log4j_kafka_appender_class: "org.apache.log4j.RollingFileAppender"
 log4j_kafka_appender_file: "{{ log4j_log_dir }}/server.log"
 log4j_kafka_appender_max_file_size: "10MB"
-log4j_kafka_appender_maxBackupIndex: "100"
+log4j_kafka_appender_max_backup_index: "100"
 
 log4j_state_change_appender_class: "org.apache.log4j.RollingFileAppender"
 log4j_state_change_appender_file: "{{ log4j_log_dir }}/state-change.log"
@@ -260,7 +260,7 @@ log4j_additivity_kafka_state_change_logger: "false"
 log4j_additivity_kafka_authorizer_logger: "false"
 
 # Service Vars
-timeoutStartSec: 90
+timeout_start_sec: 90
 
 # Enable it to create a link of log4j_log_dir in {{ log_basepath }}/confluent
 create_link_log_dir: yes
