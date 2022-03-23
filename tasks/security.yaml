@@ -1,12 +1,12 @@
 ---
 - name: "TLS | Create secrets {{ ssl.path }}"
-  file:
+  ansible.builtin.file:
     path: "{{ ssl.path }}"
     state: directory
     mode: 0600
 
 - name: "System Users | Change {{ ssl.path }} ownership"
-  file:
+  ansible.builtin.file:
     path: "{{ ssl.path }}"
     state: directory
     owner: "{{ confluent_services | first }}"
@@ -15,14 +15,14 @@
   when: kafka_system_users.enabled
 
 - name: TLS | Copy certs and keys from Ansible Vault
-  copy:
+  ansible.builtin.copy:
     src: "{{ local.files }}/{{ item }}"
     dest: "{{ ssl.path }}"
     mode: 0400
   with_items: "{{ jkstores }}"
 
 - name: System Users | Change certs and keys ownership
-  file:
+  ansible.builtin.file:
     path: "{{ ssl.path }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
@@ -31,7 +31,7 @@
   when: kafka_system_users.enabled
 
 - name: "TLS | Register new {{ service }} template with security layer"
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ conf_dest }}/{{ item }}"
     mode: 0400
@@ -40,7 +40,7 @@
   notify: restart {{ service }}
 
 - name: System Users | Change services ownership
-  file:
+  ansible.builtin.file:
     path: "{{ conf_dest }}/{{ item }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"

@@ -8,36 +8,38 @@
 
 - block: # Try to download the Confluent package on the host directly from the internet
     - name: Confluent | Download
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ confluent_url }}"
         dest: "{{ dst_path }}"
+        mode: "{{ confluent_download_file_mode }}"
         force: yes
 
   rescue: # If it fails (e.g. due to network limitations or firewall), download it locally and then copy
     - name: Confluent | Download locally
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ confluent_url }}"
         dest: "{{ local_path }}"
+        mode: "{{ confluent_download_file_mode }}"
         force: yes
       connection: local
       become: no
       run_once: yes
 
     - name: Confluent | Copy local package to hosts
-      copy:
+      ansible.builtin.copy:
         src: "/tmp/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
         dest: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
-        mode: 0644
+        mode: "{{ confluent_download_file_mode }}"
 
   always:
     - name: Confluent | Unarchive package
-      unarchive:
+      ansible.builtin.unarchive:
         src: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
         dest: "{{ dst_path }}"
         remote_src: yes
 
     - name: System Users | Change unarchived package ownership
-      file:
+      ansible.builtin.file:
         path: "{{ dst_path }}"
         owner: "{{ confluent_services | first }}"
         group: "{{ kafka_system_users.group }}"
@@ -45,7 +47,7 @@
       when: kafka_system_users.enabled
 
     - name: Confluent | Remove archived package
-      file:
+      ansible.builtin.file:
         path: "{{ dst_path }}/{{ confluent_distribution }}-{{ confluent_version }}-{{ scala_version }}.tar.gz"
         state: absent
 

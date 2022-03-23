@@ -26,6 +26,7 @@ dst_path: "/opt"
 local_path: "/tmp"
 confluent_version: "5.4.0"
 scala_version: "2.12"
+confluent_download_file_mode: 0640
 confluent_distribution: "confluent-community"
 confluent_base: http://packages.confluent.io/archive
 confluent_package_file: >-

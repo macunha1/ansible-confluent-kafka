@@ -1,6 +1,6 @@
 ---
 - name: Init Script | Create scripts for services
-  template:
+  ansible.builtin.template:
     src: service.j2
     dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
     mode: 0751
@@ -10,7 +10,7 @@
   register: initscript_creation
 
 - name: System Users | Change Init script ownership
-  file:
+  ansible.builtin.file:
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
     owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
@@ -19,7 +19,7 @@
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path
-  file:
+  ansible.builtin.file:
     src: "{{ initscripts_path }}/{{ item.value.file_name }}"
     dest: "/etc/init.d/{{ item.value.file_name }}"
     owner: "{{ item.value.user }}"
@@ -31,7 +31,7 @@
     - initscript_creation.changed
 
 - name: Init Script | Configure services
-  service:
+  ansible.builtin.service:
     name: "{{ item.value.file_name }}"
     state: "{{ item.value.state | default('started') }}"
     enabled: "{{ item.value.enabled | default(true) }}"

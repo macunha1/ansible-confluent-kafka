@@ -1,7 +1,7 @@
 ---
 
 - name: System Users | Create user group
-  group:
+  ansible.builtin.group:
     name: "{{ kafka_system_users.group }}"
     state: present
   tags:
@@ -9,7 +9,7 @@
     - installation
 
 - name: System Users | Check if sudoers file exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/sudoers
   register: sudoers_status
   tags:
@@ -17,7 +17,7 @@
     - installation
 
 - name: System Users | Include to sudoers
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/sudoers
     state: present
     insertafter: "^%wheel" # or defaults to EOF
@@ -28,7 +28,7 @@
     - installation
 
 - name: System Users | Create an user for each service
-  user:
+  ansible.builtin.user:
     name: "{{ item }}"
     groups:
       - "{{ kafka_system_users.group }}"

@@ -1,6 +1,6 @@
 ---
 - name: Systemd | Create Init script for services
-  template:
+  ansible.builtin.template:
     src: service.j2
     dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
     mode: 0751
@@ -9,7 +9,7 @@
   with_dict: "{{ services }}"
 
 - name: System Users | Change Init script ownership
-  file:
+  ansible.builtin.file:
     path: "{{ initscripts_path }}/{{ item.value.file_name }}"
     owner: "{{ item.value.user }}"
     group: "{{ kafka_system_users.group }}"
@@ -19,7 +19,7 @@
   when: kafka_system_users.enabled
 
 - name: System Users | Render environment file from template
-  template:
+  ansible.builtin.template:
     src: "{{ item.template }}"
     dest: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
     mode: 0755
@@ -28,15 +28,15 @@
     - item.group is defined
     - inventory_hostname in item.group
   with_items:
-    - template: "kafka-env.sh.j2"
+    - ansible.builtin.template: "kafka-env.sh.j2"
       name: "kafka-env.sh"
       group: "{{ groups['kafka'] }}"
-    - template: "zookeeper-env.sh.j2"
+    - ansible.builtin.template: "zookeeper-env.sh.j2"
       name: "zookeeper-env.sh"
       group: "{{ groups['zookeeper'] }}"
 
 - name: System Users | Change environment file ownership
-  file:
+  ansible.builtin.file:
     path: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
     owner: "{{ item.owner }}"
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
@@ -56,7 +56,7 @@
 
 - name: Systemd | Create services unit
   become: yes
-  template:
+  ansible.builtin.template:
     src: systemd.service.j2
     dest: "/etc/systemd/system/{{ item.value.file_name }}.service"
     mode: 0640
@@ -64,7 +64,7 @@
   with_dict: "{{ services }}"
 
 - name: System Users | Change service unit ownership
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/{{ item.value.file_name }}.service"
     mode: 0640
     group: "{{ kafka_system_users.group }}"
@@ -73,11 +73,11 @@
   when: kafka_system_users.enabled
 
 - name: Systemd | Reload daemon
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
 
 - name: Systemd | Configure service
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item.value.file_name }}"
     state: "{{ item.value.state | default('started') }}"
     enabled: "{{ item.value.enabled | default(true) }}"

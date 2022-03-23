@@ -1,6 +1,6 @@
 ---
 - name: Logs | Create a dir for each service
-  file:
+  ansible.builtin.file:
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
     mode: 0644
@@ -11,7 +11,7 @@
     - configuration
 
 - name: System Users | Change log dir ownership
-  file:
+  ansible.builtin.file:
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
@@ -25,7 +25,7 @@
     - configuration
 
 - name: Log4J | Create config files
-  template:
+  ansible.builtin.template:
     src: "log4j.properties.j2"
     dest: "{{ conf_dest }}/log4j.properties"
     mode: 0644
@@ -35,7 +35,7 @@
     - configuration
 
 - name: System Users | Change Log4j config files ownership
-  file:
+  ansible.builtin.file:
     path: "{{ conf_dest }}/log4j.properties"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
@@ -47,7 +47,7 @@
     - configuration
 
 - name: Logs | Create symlink from Confluent directory
-  file:
+  ansible.builtin.file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     state: link

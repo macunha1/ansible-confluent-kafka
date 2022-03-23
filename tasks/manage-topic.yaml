@@ -1,7 +1,7 @@
 ---
 
 - name: Kafka Topics | Calculate replication-factor and partitions
-  set_fact:
+  ansible.builtin.set_fact:
     kafka_params:
       - "--replication-factor {{ kafka_topic.replication_factor | default(default_replication_factor) }}"
       - "--partitions {{ kafka_topic.partitions | default(groups['kafka'] | length) }}"
@@ -10,7 +10,7 @@
     - create
 
 - name: Kafka Topics | Create a new partitioned topic on Kafka
-  command: >
+  ansible.builtin.command: >
     {{ kafka_bins }}/kafka-topics
     --zookeeper {{ random_zookeeper }}
     {{ kafka_params | join(" ") }}
@@ -24,7 +24,7 @@
     - create
 
 - name: Kafka Topics | Delete topic from Kafka if it exists
-  command: >
+  ansible.builtin.command: >
     {{ kafka_bins }}/kafka-topics
     --zookeeper {{ random_zookeeper }}
     --delete
@@ -37,7 +37,7 @@
     - delete
 
 - name: "Kafka Topics | Set topic config options "
-  command: >
+  ansible.builtin.command: >
     {{ kafka_bins }}/kafka-topics
     --zookeeper {{ random_zookeeper }}
     --alter

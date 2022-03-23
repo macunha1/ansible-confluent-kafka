@@ -1,6 +1,6 @@
 ---
 - name: Zookeeper | Create data dir
-  file:
+  ansible.builtin.file:
     path: "{{ zookeeper_data_dir }}"
     state: directory
     force: yes
@@ -12,7 +12,7 @@
     - configuration
 
 - name: System Users | Change data dir ownership
-  file:
+  ansible.builtin.file:
     path: "{{ zookeeper_data_dir }}"
     owner: zookeeper
     group: "{{ kafka_system_users.group }}"
@@ -25,7 +25,7 @@
     - configuration
 
 - name: Zookeeper | Create config files from template
-  template:
+  ansible.builtin.template:
     src: "{{ item.template }}"
     dest: "{{ item.dest }}/{{ item.name }}"
     mode: 0644
@@ -42,7 +42,7 @@
     - configuration
 
 - name: System Users | Change Zookeeper config files ownership
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: zookeeper
     group: "{{ kafka_system_users.group }}"
