@@ -6,8 +6,9 @@
   tags:
     - installation
 
-- block: # Try to download the Confluent package on the host directly from the internet
-    - name: Confluent | Download
+- name: Confluent | Download package
+  block: # Try to download the Confluent package on the host directly from the internet
+    - name: Confluent | Download remotely
       ansible.builtin.get_url:
         url: "{{ confluent_url }}"
         dest: "{{ dst_path }}"

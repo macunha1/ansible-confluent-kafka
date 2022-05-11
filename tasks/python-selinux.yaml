@@ -1,5 +1,4 @@
 ---
-
 - name: RHEL | Enable epel-release
   ansible.builtin.package:
     name: epel-release
@@ -8,8 +7,9 @@
   tags:
     - installation
 
-- block: # Try to install SELinux bindings with Pip
-    - name: SELinux | Install Python bindings
+- name: SELinux | Install Python bindings
+  block: # Try to install SELinux bindings with Pip
+    - name: SELinux | Install using pip
       ansible.builtin.pip:
         name: selinux
       tags:
