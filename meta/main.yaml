@@ -1,8 +1,7 @@
 ---
 galaxy_info:
-  # Ansible's team decided to enforce a cosmetic breaking change here,
-  # forcing the naming convention to be delimited by dashes instead of
-  # underscores.
+  # Ansible team decided to enforce a cosmetic breaking change here,
+  # forcing the naming convention to be delimited by underscores.
   #
   # Ref: https://github.com/ansible/galaxy/issues/1123
   # Ref: https://galaxy-dev.ansible.com/docs/contributing/creating_role.html#role-names
@@ -11,32 +10,27 @@ galaxy_info:
   description: >
     Ansible Role to install Apache Kafka and
     Apache Zookeeper using the Confluent package.
+
   license: Apache 2.0
   company: None
-  min_ansible_version: 2.2
+  min_ansible_version: "2.2"
   platforms:
     - name: Alpine
       versions:
         - all # only available
     - name: Debian
       versions:
-        - jessie
-        - stretch
-        - buster
+        - all
     - name: EL
       versions:
-        - 7
-        - 6
+        - all
     - name: Fedora
       versions:
-        - 25
-        - 26
+        - all
     - name: Ubuntu
       versions:
-        - xenial
-        - trusty
-        - bionic
-        - focal
+        - all
+
   galaxy_tags:
     - apache
     - kafka
