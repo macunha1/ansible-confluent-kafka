@@ -24,21 +24,20 @@ kafka_system_users:
 
 dst_path: "/opt"
 local_path: "/tmp"
-confluent_version: "5.4.0"
-scala_version: "2.12"
-confluent_download_file_mode: 0640
-confluent_distribution: "confluent-community"
-confluent_base: http://packages.confluent.io/archive
-confluent_package_file: >-
-  {{ confluent_version[:3] }}/{{ confluent_distribution }}
-  -{{ confluent_version }}-{{ scala_version }}.tar.gz
-confluent_url: "{{ confluent_base }}/{{ confluent_package_file | replace(' ', '') }}"
-
 log_basepath: "/var/log"
 data_basepath: "/var/data"
 initscripts_path: "/usr/sbin"
 conf_dest: "/etc/config"
 
+confluent_version: "7.2.1"
+confluent_download_file_mode: 0640
+confluent_base: http://packages.confluent.io/archive
+confluent_distribution: "confluent-community"
+confluent_package_file_name: "{{ confluent_distribution }}-{{ confluent_version }}.tar.gz"
+confluent_url_format: >-
+  {{ confluent_base }}/{{ confluent_version[:3] }}/
+  {{ confluent_package_file_name }}
+confluent_url: "{{ confluent_url_format | replace(' ', '') }}"
 # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
 oracle_java_set_as_default: yes
 oracle_java_version: 8
@@ -138,7 +137,6 @@ zookeeper_gc_logger_enabled_opts: >-
   {{ zookeeper_gc_logger_rotation_opts }}
   {{ zookeeper_gc_logger_format_opts }}
 zookeeper_gc_logger_disabled_opts: "-Dnogclog"
-
 ## Services
 confluent_kafka_env_file_path: "/etc/profile.d"
 

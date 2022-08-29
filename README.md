@@ -75,7 +75,6 @@ For further information on the Docker images being used to run containers on the
     dst_path: "/opt"
     local_path: "/tmp"
     confluent_version: "5.4.0"
-    scala_version: "2.12"
     confluent_distribution: "confluent-community"
     log_basepath: "/var/log"
     data_basepath: "/var/data"
