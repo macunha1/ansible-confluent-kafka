@@ -7,20 +7,15 @@ confluent_services:
 kafka_ip: "{{ ansible_all_ipv4_addresses | first }}"
 kafka_plaintext_port: 9092
 kafka_security_port: 9093
-kafka_group: >-
-  {%- if groups['kafka'] is defined -%}
-  {{ groups['kafka'] }}
-  {%- else -%}
-  {{ ansible_play_hosts }}
-  {%- endif -%}
+kafka_group: "{{ groups['kafka'] | default(ansible_play_hosts) }}"
 
 kafka_system_users:
-  enabled: yes
+  enabled: true
   group: wheel
   permissions:
     directory_mode: "0750"
     file_mode: "0640"
-  include_to_sudoers: yes
+  include_to_sudoers: true
 
 dst_path: "/opt"
 local_path: "/tmp"
@@ -39,7 +34,7 @@ confluent_url_format: >-
   {{ confluent_package_file_name }}
 confluent_url: "{{ confluent_url_format | replace(' ', '') }}"
 # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
-oracle_java_set_as_default: yes
+oracle_java_set_as_default: true
 oracle_java_version: 8
 
 ## Kafka Vars
@@ -63,9 +58,9 @@ log_segment_bytes: 1073741824
 log_retention_check_interval_ms: 300000
 ion_timeout_ms: 6000
 
-confluent_support_metrics_enable: yes
+confluent_support_metrics_enable: true
 confluent_support_customer_id: "anonymous"
-auto_create_topics: no
+auto_create_topics: false
 default_replication_factor: 1
 offsets_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
 min_insync_replicas: 1
@@ -83,9 +78,11 @@ kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
 
 kafka_init_memory_heapsize_with_units: 1G
 
+ansible_memtotal_gb_sqrt: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
 kafka_max_memory_heapsize_with_units: >-
-  {{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G'
-  if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '1G' }}
+  {{ (ansible_memtotal_gb_sqrt > 1) |
+     ternary((ansible_memtotal_gb_sqrt | string) + 'G',
+             kafka_init_memory_head_with_units) }}
 
 ## Kafka SSL Vars
 kafka_security:
@@ -123,7 +120,7 @@ zookeeper_max_memory_heapsize_with_units: >-
   if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '512M' }}
 
 # Zookeeper Garbage Collection Logging
-zookeeper_gc_logger_enabled: yes
+zookeeper_gc_logger_enabled: true
 zookeeper_gc_logger_name: "{{ log4j_log_dir }}/zookeeper-gc.log"
 zookeeper_gc_logger_enable_opts: "-verbose:gc -Xloggc:{{ zookeeper_gc_logger_name }}"
 zookeeper_gc_logger_number_files: 10
@@ -149,7 +146,7 @@ kafka_services:
     daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
     daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
     state: "started"
-    enabled: yes
+    enabled: true
     limit_nofile: "{{ kafka_file_descriptor_limit }}"
     limit_nproc: "{{ kafka_nproc_limit }}"
     environment_file: "{{ kafka_env_file }}"
@@ -162,7 +159,7 @@ kafka_services:
     daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
     daemon_opts: " -daemon"
     state: "started"
-    enabled: yes
+    enabled: true
 
 zookeeper_services:
   zookeeper:
@@ -172,12 +169,12 @@ zookeeper_services:
     daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
     daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
     daemon_opts: >-
-      {% if ansible_service_mgr in [ 'upstart', 'sysvinit' ] -%}
+      {% if ansible_service_mgr in ['upstart', 'sysvinit'] -%}
       -daemon
       {%- endif -%}
       {{ conf_dest }}/zookeeper.properties
     state: "started"
-    enabled: yes
+    enabled: true
     limit_nofile: "{{ zookeeper_file_descriptor_limit }}"
     limit_nproc: "{{ zookeeper_nproc_limit }}"
     environment_file: "{{ zookeeper_env_file }}"
@@ -262,4 +259,4 @@ log4j_additivity_kafka_authorizer_logger: "false"
 timeout_start_sec: 90
 
 # Enable it to create a link of log4j_log_dir in {{ log_basepath }}/confluent
-create_link_log_dir: yes
+create_link_log_dir: true
