@@ -57,7 +57,7 @@
     - configuration
 
 - name: "Ansible | Include tasks for {{ ansible_service_mgr }}"
-  include_tasks: "{{ item }}"
+  ansible.builtin.include_tasks: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_service_mgr }}.yaml"

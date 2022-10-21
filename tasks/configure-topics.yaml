@@ -24,7 +24,7 @@
       difference(kafka_topics_result.stdout_lines) }}
 
 - name: Kafka Topics | Create and Configure Topics
-  include_tasks: manage-topic.yaml
+  ansible.builtin.include_tasks: manage-topic.yaml
   loop: "{{ default_kafka_topics }}"
   loop_control:
     loop_var: kafka_topic

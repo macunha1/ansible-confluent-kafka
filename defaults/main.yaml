@@ -62,7 +62,7 @@ confluent_support_metrics_enable: true
 confluent_support_customer_id: "anonymous"
 auto_create_topics: false
 default_replication_factor: 1
-offsets_replication_factor: "{{ [ kafka_group | length, 3 ] | min }}"
+offsets_replication_factor: "{{ [kafka_group | length, 3] | min }}"
 min_insync_replicas: 1
 
 ssl:
@@ -71,14 +71,18 @@ ssl:
 local:
   files: ../files
 
+kafka_binaries_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
+kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
+
 kafka_file_descriptor_limit: 100000
 kafka_nproc_limit: 65536
 
-kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
-
 kafka_init_memory_heapsize_with_units: 1G
 
-ansible_memtotal_gb_sqrt: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
+ansible_memtotal_gb_sqrt: >-
+  {{ (ansible_memtotal_mb / 1024) | root |
+     round | int }}
+
 kafka_max_memory_heapsize_with_units: >-
   {{ (ansible_memtotal_gb_sqrt > 1) |
      ternary((ansible_memtotal_gb_sqrt | string) + 'G',
@@ -99,12 +103,13 @@ schema_registry_debug: "false"
 
 ## Zookeeper Vars
 zookeeper_group: "{{ groups['zookeeper'] | default(ansible_play_hosts) }}"
-zookeepers: >
-  "{% for server in zookeeper_group -%}
+zookeeper_hosts: >-
+  {% for server in zookeeper_group -%}
   {{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
-  {% endfor %}"
+  {% endfor %}
+
 zookeeper_port: 2181
-zookeeper_connect: "{{ zookeepers.split() | join(',') }}"
+zookeeper_connect: "{{ zookeeper_hosts.split() | join(',') }}"
 zookeeper_data_dir: "{{ data_basepath }}/zookeeper"
 zookeeper_log_dir: "{{ data_basepath }}/logs/zookeeper"
 zookeeper_max_cnxns: 0
@@ -139,42 +144,47 @@ confluent_kafka_env_file_path: "/etc/profile.d"
 
 kafka_services:
   kafka:
+    enabled: true
+
     file_name: "kafka"
     user: "kafka"
-    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-server-start"
-    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-server-stop"
+    daemon_start: "{{ kafka_binaries_dir }}/kafka-server-start"
+    daemon_stop: "{{ kafka_binaries_dir }}/kafka-server-stop"
     daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
-    daemon_opts: "{% if ansible_service_mgr == 'upstart' %}-daemon {% endif %}{{ conf_dest }}/kafka.properties"
+    daemon_opts: >-
+      {% if ansible_service_mgr in ['upstart', 'sysvinit'] %} -daemon{% endif %}
+      {{ conf_dest }}/kafka.properties
+
     state: "started"
-    enabled: true
     limit_nofile: "{{ kafka_file_descriptor_limit }}"
     limit_nproc: "{{ kafka_nproc_limit }}"
     environment_file: "{{ kafka_env_file }}"
 
   kafka-rest:
+    enabled: true
+
     file_name: "kafka-rest"
     user: "kafka"
-    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-rest-start"
-    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/kafka-rest-stop"
+    daemon_start: "{{ kafka_binaries_dir }}/kafka-rest-start"
+    daemon_stop: "{{ kafka_binaries_dir }}/kafka-rest-stop"
     daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
     daemon_opts: " -daemon"
     state: "started"
-    enabled: true
 
 zookeeper_services:
   zookeeper:
+    enabled: true
+
     file_name: "zookeeper"
     user: "zookeeper"
-    daemon_start: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-start"
-    daemon_stop: "{{ dst_path }}/confluent-{{ confluent_version }}/bin/zookeeper-server-stop"
+    daemon_start: "{{ kafka_binaries_dir }}/zookeeper-server-start"
+    daemon_stop: "{{ kafka_binaries_dir }}/zookeeper-server-stop"
     daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
     daemon_opts: >-
-      {% if ansible_service_mgr in ['upstart', 'sysvinit'] -%}
-      -daemon
-      {%- endif -%}
+      {% if ansible_service_mgr in ['upstart', 'sysvinit'] %} -daemon{% endif %}
       {{ conf_dest }}/zookeeper.properties
+
     state: "started"
-    enabled: true
     limit_nofile: "{{ zookeeper_file_descriptor_limit }}"
     limit_nproc: "{{ zookeeper_nproc_limit }}"
     environment_file: "{{ zookeeper_env_file }}"
@@ -205,7 +215,6 @@ zookeeper_services:
 log4j_log_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
 
 log4j_root_logger_level: "INFO"
-
 log4j_stdout_class: "org.apache.log4j.ConsoleAppender"
 
 log4j_kafka_appender_class: "org.apache.log4j.RollingFileAppender"

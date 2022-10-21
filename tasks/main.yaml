@@ -1,45 +1,44 @@
 ---
-
 - name: System Users | Create necessary users and groups
-  import_tasks: groups.yaml
+  ansible.builtin.include_tasks: groups.yaml
   when: kafka_system_users.enabled
   tags:
     - groups
     - installation
 
 - name: SE Linux | Install Python SE Linux lib
-  import_tasks: python-selinux.yaml
+  ansible.builtin.import_tasks: python-selinux.yaml
   tags:
     - installation
 
-- name: Installation | Download binaries if needed
-  import_tasks: download.yaml
+- name: Installation | Download Confluent package if needed
+  ansible.builtin.import_tasks: download.yaml
   tags:
     - download
     - installation
 
-- name: Installation | Create needed directories
-  import_tasks: directories.yaml
+- name: Installation | Create necessary directories
+  ansible.builtin.import_tasks: directories.yaml
   tags:
     - installation
 
 - name: Zookeeper | Include tasks
-  include_tasks: zookeeper.yaml
+  ansible.builtin.include_tasks: zookeeper.yaml
   when: inventory_hostname in zookeeper_group
   tags:
     - service
     - installation
     - configuration
 
-- name: Logs | Including tasks
-  import_tasks: "logs.yaml"
+- name: Logs | Import tasks
+  ansible.builtin.import_tasks: "logs.yaml"
   tags:
     - service
     - logs
     - configuration
 
 - name: Kafka | Including tasks
-  include_tasks: "kafka.yaml"
+  ansible.builtin.include_tasks: "kafka.yaml"
   when: inventory_hostname in kafka_group
   tags:
     - service
@@ -48,7 +47,7 @@
 
 # TO-DO: Make TLS useful again
 # - name: Configure security layer for Kafka
-#   import_tasks: "security.yaml"
+#   ansible.builtin.import_tasks: "security.yaml"
 #   vars:
 #     jkstores:
 #       - "{{ kafka_security.server.keystore }}"
@@ -61,9 +60,7 @@
 #     - ssl
 
 - name: Kafka | Configure and create default topics
-  import_tasks: "configure-topics.yaml"
-  vars:
-    kafka_bins: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
+  ansible.builtin.include_tasks: "configure-topics.yaml"
   when: default_kafka_topics is defined
   tags:
     - kafka-topics
