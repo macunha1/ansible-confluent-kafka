@@ -1,9 +1,9 @@
 ---
-
 - name: System Users | Create user group
   ansible.builtin.group:
     name: "{{ kafka_system_users.group }}"
     state: present
+
   tags:
     - groups
     - installation
@@ -12,6 +12,7 @@
   ansible.builtin.stat:
     path: /etc/sudoers
   register: sudoers_status
+
   tags:
     - groups
     - installation
@@ -23,6 +24,7 @@
     insertafter: "^%wheel" # or defaults to EOF
     line: "^%{{ kafka_system_users.group }} ALL=(ALL) NOPASSWD: ALL"
   when: sudoers_status.stat.exists
+
   tags:
     - groups
     - installation
@@ -35,7 +37,8 @@
     system: yes
     create_home: no
     append: yes
-  with_items: "{{ confluent_services }}"
+  loop: "{{ confluent_services }}"
+
   tags:
     - groups
     - installation

@@ -55,3 +55,7 @@
       ansible.builtin.file:
         path: "{{ dst_path }}/{{ confluent_package_file_name }}"
         state: absent
+
+  tags:
+    - download
+    - installation

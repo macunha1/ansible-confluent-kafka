@@ -7,48 +7,11 @@ name: Continuous Integration
   schedule:
     - cron: "0 0 * * *"
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ansible-image:
-          - macunha1/ansible:centos-7
-          # TODO: Make the CI work on those images again.
-          # - macunha1/ansible:java-alpine-3.11.5
-          # - macunha1/ansible:java-debian-10
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Test | Run Playbook
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ matrix.ansible-image }}
-          shell: bash
-          options: -v ${{ github.workspace }}:/workspace
-          run: |
-            pip install ansible==2.9.6
-
-            # NOTE: No longer installing the requirements.yaml in the test phase
-            # to avoid (constant) issues with Java Hotspot 8. The Docker image
-            # includes OpenJDK 8/11 by default, so tests won't rely on external
-            # resources.
-            # ansible-galaxy install -r requirements.yaml
-            ansible-galaxy install macunha1.confluent_kafka
-
-            # Check code style and syntax
-            ansible-playbook -c local \
-              --syntax-check /workspace/test.yaml
-
-            # Install using test.yaml playbook
-            ansible-playbook -c local /workspace/test.yaml
-
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: true
 
@@ -58,9 +21,9 @@ jobs:
       - name: Python | Setup
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: "3.10.8"
 
-      - name: Enable cache for (pip) dependencies
+      - name: Python | Enable cache for (pip) dependencies
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
@@ -76,9 +39,72 @@ jobs:
           yamllint -c .github/actions/config/yamllint.yaml .
           ansible-lint -c .github/actions/config/ansible.yaml .
 
+  # NOTE: Tests with docker runner are not working due to systemd <> docker
+  # incompatibility.
+  #
+  # test:
+  #   runs-on: ubuntu-22.04
+  #   needs: build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ansible_version:
+  #         - 2.9.27
+  #         - 2.10.7
+  #         - 6.5.0
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     - name: Test | Run Playbook
+  #       uses: addnab/docker-run-action@v3
+  #       with:
+  #         image: docker.io/macunha1/ansible:java-alpine-3.16.2
+  #         shell: bash
+  #         options: >-
+  #           -v ${{ github.workspace }}:/workspace/macunha1.confluent_kafka
+  #           -e ANSIBLE_ROLES_PATH=/workspace
+  #           -w /workspace/macunha1.confluent_kafka
+  #           --entrypoint "sh"
+  #         run: |
+  #           pip install ansible==${{ matrix.ansible_version }}
+  #           # NOTE: No longer installing the requirements.yaml in the test phase
+  #           # to avoid (constant) issues with Java Hotspot 8. The Docker image
+  #           # includes OpenJDK 8/11 by default, so that tests don't need to rely
+  #           # on external resources, making them more predictable, consistent,
+  #           # and easily reproducible.
+  #           #
+  #           # ansible-galaxy install -r requirements.yaml
+
+  #           # Check code style and syntax
+  #           ansible-playbook -c local --syntax-check tests/playbook.yaml
+
+  #           # Install using test.yaml playbook
+  #           ansible-playbook -c local tests/playbook.yaml
+
+  publish:
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    runs-on: ubuntu-22.04
+    # needs: test
+    strategy:
+      fail-fast: true
+
+    steps:
+      # NOTE: Anchors are not supported
+      # Ref: https://github.com/macunha1/ansible-confluent-kafka/actions/runs/3304508364
+      - name: Python | Enable cache for (pip) dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+          restore-keys: |
+            ${{ runner.os }}-pip
+
       - name: Galaxy | Import
-        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          python -m pip install ansible
+
           ansible-galaxy role import \
             --api-key ${ANSIBLE_GALAXY_API_KEY} \
             --branch main \

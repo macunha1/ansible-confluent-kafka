@@ -35,10 +35,10 @@ vars at [defaults](defaults/main.yaml) and customize them as you wish.
 
 ### Prerequisites
 
-Ansible 2.2+, Python and Pip.
+Ansible 2.10+, Python and Pip.
 
 ```shell
-pip install ansible>=2.2.0
+pip install ansible>=2.10.0
 ```
 
 After installing Ansible, you must install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name),
@@ -54,7 +54,7 @@ ansible-galaxy install -r requirements.yaml
 
 ## Tests
 
-The test suite is currently executing against Ansible 2.9.6 (as you can see [here](.github/workflows/ci.yaml)),
+The test suite is currently executing against Ansible 2.12 (as you can see [here](.github/workflows/ci.yaml)),
 inside Docker containers running Ansible on Python 3, using Open JDK for the
 sake of testing.
 
@@ -114,7 +114,7 @@ For further information on the Docker images being used to run containers on the
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-Feel free to fill [an issue](https://github.com/macunha1/ansible-github-actions-runner/issues)
+Feel free to fill [an issue](https://github.com/macunha1/ansible-confluent-kafka/issues)
 containing feature request(s), or (even better) to send me a Pull request, I
 would be happy to collaborate with you.
 

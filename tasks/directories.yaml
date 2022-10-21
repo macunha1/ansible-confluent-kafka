@@ -6,6 +6,9 @@
     mode: 0755
     force: yes
 
+  tags:
+    - installation
+
 - name: Installation | Change configuration directory ownership
   ansible.builtin.file:
     path: "{{ conf_dest }}"
@@ -14,3 +17,6 @@
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
     force: yes
   when: kafka_system_users.enabled
+
+  tags:
+    - installation

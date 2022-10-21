@@ -1,7 +1,7 @@
 #!/bin/bash
-{% if ansible_service_mgr  == "sysvinit" %}
+{% if ansible_service_mgr == "sysvinit" %}
 ### BEGIN INIT INFO
-# Provides:          {{ item.value.file_name }}
+# Provides:          {{ service_name }}
 # Required-Start:    $all
 # Required-Stop:
 # Default-Start:     2 3 4 5
@@ -11,74 +11,74 @@
 # chkconfig: 2345 80 95
 {% endif %}
 
-SERVICE_NAME="{{ item.value.file_name }}"
-DAEMON_START="{{ item.value.daemon_start }}"
-DAEMON_OPTS="{{ item.value.daemon_opts }}"
-DAEMON_STOP="{{ item.value.daemon_stop }}"
+SERVICE_NAME="{{ service_name }}"
+DAEMON_START="{{ daemon_start }}"
+DAEMON_OPTS="{{ daemon_opts }}"
+DAEMON_STOP="{{ daemon_stop }}"
 
 if [ ! -x $DAEMON_START ]; then
-	echo "ERROR: Can't execute $DAEMON_START."
-	exit 1
+    echo "ERROR: Can't execute $DAEMON_START."
+    exit 1
 fi
 
 start_service() {
-	echo -n " * Starting $SERVICE_NAME... "
-	{{ item.value.daemon_status }}
+    echo -n " * Starting $SERVICE_NAME... "
+    {{ daemon_status }}
 
-	if [ $? -eq 1 ]; then
-		$DAEMON_START $DAEMON_OPTS
-		if [ $? -eq 255 ]; then
-			echo "couldn't start :("
-			exit 1
-		fi
-	fi
+    if [ $? -eq 1 ]; then
+        $DAEMON_START $DAEMON_OPTS
+        if [ $? -eq 255 ]; then
+            echo "couldn't start :("
+            exit 1
+        fi
+    fi
 
-	echo "done"
+    echo "done"
 }
 
 stop_service() {
-	echo -n " * Stopping $SERVICE_NAME... "
-	$DAEMON_STOP
-	if [ $? -eq 1 ]; then
-		echo "not running"
-		return
-	fi
+    echo -n " * Stopping $SERVICE_NAME... "
+    $DAEMON_STOP
+    if [ $? -eq 1 ]; then
+        echo "not running"
+        return
+    fi
 
-	echo "done"
+    echo "done"
 }
 
 status_service() {
-	echo -n "Checking $SERVICE_NAME..."
-	{{ item.value.daemon_status }}
-	if [ $? -eq 1 ]; then
-		echo "not running"
-		return
-	fi
+    echo -n "Checking $SERVICE_NAME..."
+    {{ daemon_status }}
+    if [ $? -eq 1 ]; then
+        echo "not running"
+        return
+    fi
 
-	echo "running"
+    echo "running"
 }
 
 case "$1" in
-start)
-	start_service
-	exit 0
-	;;
-stop)
-	stop_service
-	exit 0
-	;;
-status)
-	status_service
-	;;
-restart)
-	stop_service
-	start_service
-	exit 0
-	;;
-*)
-	echo "Usage: service $SERVICE_NAME {start|stop|status|restart}" >&2
-	exit 1
-	;;
+    start)
+        start_service
+        exit 0
+        ;;
+    stop)
+        stop_service
+        exit 0
+        ;;
+    status)
+        status_service
+        ;;
+    restart)
+        stop_service
+        start_service
+        exit 0
+        ;;
+    *)
+        echo "Usage: service $SERVICE_NAME {start|stop|status|restart}" >&2
+        exit 1
+        ;;
 esac
 
 exit 0

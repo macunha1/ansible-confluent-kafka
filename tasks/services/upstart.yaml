@@ -2,37 +2,58 @@
 - name: Init Script | Create scripts for services
   ansible.builtin.template:
     src: service.j2
-    dest: "{{ initscripts_path }}/{{ item.value.file_name }}"
+    dest: "{{ initscripts_path }}/{{ confluent_service.value.file_name }}"
     mode: 0751
-    force: yes
-  become: yes
-  with_dict: "{{ services }}"
+    force: true
   register: initscript_creation
+  become: true
+
+  vars:
+    service_name: "{{ confluent_service.key }}"
+    daemon_start: "{{ confluent_service.value.daemon_start }}"
+    daemon_opts: "{{ confluent_service.value.daemon_opts }}"
+    daemon_stop: "{{ confluent_service.value.daemon_stop }}"
+    daemon_status: "{{ confluent_service.value.daemon_status }}"
+
+  loop: "{{ services | dict2items }}"
+  loop_control:
+    loop_var: confluent_service
 
 - name: System Users | Change Init script ownership
   ansible.builtin.file:
-    path: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    owner: "{{ item.value.user }}"
+    path: "{{ initscripts_path }}/{{ confluent_service.value.file_name }}"
+    owner: "{{ confluent_service.value.user }}"
     group: "{{ kafka_system_users.group }}"
-  become: yes
-  with_dict: "{{ services }}"
+
+  become: true
+  loop: "{{ services | dict2items }}"
+  loop_control:
+    loop_var: confluent_service
+
   when: kafka_system_users.enabled
 
 - name: Init Script | Link to initscripts path
   ansible.builtin.file:
-    src: "{{ initscripts_path }}/{{ item.value.file_name }}"
-    dest: "/etc/init.d/{{ item.value.file_name }}"
-    owner: "{{ item.value.user }}"
+    src: "{{ initscripts_path }}/{{ confluent_service.value.file_name }}"
+    dest: "/etc/init.d/{{ confluent_service.value.file_name }}"
+    owner: "{{ confluent_service.value.user }}"
     state: link
-    force: yes
-  with_dict: "{{ services }}"
+    force: true
+
+  loop: "{{ services | dict2items }}"
+  loop_control:
+    loop_var: confluent_service
+
   when:
     - initscripts_path not in [ "/etc/init.d", "/etc/init.d/" ]
     - initscript_creation.changed
 
 - name: Init Script | Configure services
   ansible.builtin.service:
-    name: "{{ item.value.file_name }}"
-    state: "{{ item.value.state | default('started') }}"
-    enabled: "{{ item.value.enabled | default(true) }}"
-  with_dict: "{{ services }}"
+    name: "{{ confluent_service.value.file_name }}"
+    state: "{{ confluent_service.value.state | default('started') }}"
+    enabled: "{{ confluent_service.value.enabled | default(true) }}"
+
+  loop: "{{ services | dict2items }}"
+  loop_control:
+    loop_var: confluent_service

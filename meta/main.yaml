@@ -7,13 +7,13 @@ galaxy_info:
   # Ref: https://galaxy-dev.ansible.com/docs/contributing/creating_role.html#role-names
   role_name: confluent_kafka
   author: Matheus Cunha
-  description: >
+  description: >-
     Ansible Role to install Apache Kafka and
     Apache Zookeeper using the Confluent package.
 
   license: Apache 2.0
   company: None
-  min_ansible_version: "2.2"
+  min_ansible_version: "2.10"
   platforms:
     - name: Alpine
       versions:

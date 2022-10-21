@@ -4,7 +4,7 @@
     path: "{{ log_basepath }}/{{ item }}"
     state: directory
     mode: 0644
-  with_items: "{{ confluent_services }}"
+  loop: "{{ confluent_services }}"
   tags:
     - service
     - logs
@@ -17,7 +17,7 @@
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
     owner: "{{ confluent_services | first }}"
     group: "{{ kafka_system_users.group }}"
-  with_items: "{{ confluent_services }}"
+  loop: "{{ confluent_services }}"
   when: kafka_system_users.enabled
   tags:
     - service
@@ -46,15 +46,36 @@
     - logs
     - configuration
 
+- name: Log4J | Create log directory
+  ansible.builtin.file:
+    path: "{{ log4j_log_dir }}"
+    state: directory
+    mode: 0644
+  tags:
+    - service
+    - logs
+    - configuration
+
+- name: System Users | Change log4j directory ownership
+  ansible.builtin.file:
+    path: "{{ log4j_log_dir }}"
+    state: directory
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
+    owner: "{{ confluent_services | first }}"
+    group: "{{ kafka_system_users.group }}"
+  when: kafka_system_users.enabled
+  tags:
+    - service
+    - logs
+    - configuration
+
 - name: Logs | Create symlink from Confluent directory
   ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ log4j_log_dir }}"
+    dest: "{{ log_basepath }}/confluent"
     state: link
-    force: yes
-  with_items:
-    - src: "{{ log4j_log_dir }}"
-      dest: "{{ log_basepath }}/confluent"
+    force: true
+
   when: create_link_log_dir
   tags:
     - service

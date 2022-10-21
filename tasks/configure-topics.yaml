@@ -4,12 +4,14 @@
     random_zookeeper: >-
       {{ hostvars.get(item).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
   with_random_choice: "{{ zookeeper_group }}"
+  tags:
+    - always
 
 - name: Kafka Topics | List topics
   ansible.builtin.command: >-
     {{ kafka_bins }}/kafka-topics --zookeeper {{ random_zookeeper }} --list
-  run_once: yes
-  changed_when: no
+  run_once: true
+  changed_when: false # Read operation, won't change host state
   register: kafka_topics_result
   tags:
     - create
@@ -24,7 +26,8 @@
       difference(kafka_topics_result.stdout_lines) }}
 
 - name: Kafka Topics | Create and Configure Topics
-  ansible.builtin.include_tasks: manage-topic.yaml
+  ansible.builtin.include_tasks:
+    file: manage-topic.yaml
   loop: "{{ default_kafka_topics }}"
   loop_control:
     loop_var: kafka_topic

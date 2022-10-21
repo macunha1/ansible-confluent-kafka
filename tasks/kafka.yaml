@@ -4,6 +4,9 @@
     src: "kafka.properties.j2"
     dest: "{{ conf_dest }}/kafka.properties"
     mode: 0644
+  tags:
+    - service
+    - configuration
 
 - name: System Users | Change config file ownership
   ansible.builtin.file:
@@ -12,9 +15,13 @@
     group: "{{ kafka_system_users.group }}"
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
   when: kafka_system_users.enabled
+  tags:
+    - service
+    - configuration
 
-- name: "Ansible | Include tasks for {{ ansible_service_mgr }}"
-  ansible.builtin.include_tasks: "{{ item }}"
+- name: "Kafka | Include tasks for {{ ansible_service_mgr }}"
+  ansible.builtin.include_tasks:
+    file: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_service_mgr }}.yaml"
@@ -22,3 +29,6 @@
       paths: ./services
   vars:
     services: "{{ kafka_services }}"
+  tags:
+    - service
+    - configuration

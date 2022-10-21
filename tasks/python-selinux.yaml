@@ -12,8 +12,6 @@
     - name: SELinux | Install using pip
       ansible.builtin.pip:
         name: selinux
-      tags:
-        - installation
 
   rescue:
     - name: SELinux | Set Python packages map
@@ -33,5 +31,6 @@
       when:
         - libselinux.get(ansible_python.version.major) is defined
         - libselinux.get(ansible_python.version.major).get(ansible_os_family) is defined
-      tags:
-        - installation
+
+  tags:
+    - installation
