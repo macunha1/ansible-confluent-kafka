@@ -1,0 +1,9 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Ensure content type is text/html
+      ansible.builtin.assert:
+        that: true

@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+
+  tasks:
+    - name: "Include macunha1.confluent_kafka"
+      ansible.builtin.include_role:
+        name: "macunha1.confluent_kafka"
