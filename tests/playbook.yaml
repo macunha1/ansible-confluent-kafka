@@ -9,6 +9,5 @@
     # was previously installed on the container image used for CI. Tests are no
     # longer relying on external resources, making them more predictable,
     # consistent, and easily reproducible.
-    # - ansiblebit.oracle-java
 
     - macunha1.confluent_kafka

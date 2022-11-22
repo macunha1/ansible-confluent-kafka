@@ -41,16 +41,14 @@ Ansible 2.10+, Python and Pip.
 pip install ansible>=2.10.0
 ```
 
-After installing Ansible, you must install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name),
-and use it in your playbook. Kafka needs a JVM to run.
+After installing Ansible, you MUST install a [Java role](https://galaxy.ansible.com/list#/roles?page=1&page_size=10&autocomplete=java&order=-stargazers_count,name),
+JDK is a must-have in your playbook. Kafka needs a JVM to run.
 
-It's strongly recommended (as you can see [here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) to run the latest version of Oracle JDK 1.8 (Java 8) or Java 11.
+You can see the recommended version
+[here](https://docs.confluent.io/current/kafka/deployment.html#jvm)) as well as
+the supported Java versions and JDK implementations.
 
-Requirements includes [Ansiblebit Oracle Java role](https://github.com/ansiblebit/oracle-java), which can be easily installed through:
-
-```shell
-ansible-galaxy install -r requirements.yaml
-```
+Pick your favorite from the list, set a role to install and configure it.
 
 ## Tests
 
@@ -80,12 +78,8 @@ For further information on the Docker images being used to run containers on the
     data_basepath: "/var/data"
     initscripts_path: "/usr/sbin"
     conf_dest: "/etc/config"
-    # Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
-    oracle_java_set_as_default: yes
-    oracle_java_version: 8
 
   roles:
-    - ansiblebit.oracle-java
     - macunha1.confluent_kafka
 ```
 
@@ -96,7 +90,6 @@ For further information on the Docker images being used to run containers on the
 - hosts: kafka,zookeeper
 
   roles:
-    - ansiblebit.oracle-java
     - macunha1.confluent_kafka
 ```
 

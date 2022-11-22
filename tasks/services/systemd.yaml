@@ -83,9 +83,9 @@
   vars:
     service_name: "{{ confluent_service.key }}"
     file_name: "{{ confluent_service.value.file_name }}"
-    environment_file: "{{ confluent_service.value.environment_file }}"
-    limit_nofile: "{{ confluent_service.value.limit_nofile }}"
-    limit_nproc: "{{ confluent_service.value.limit_nproc }}"
+    environment_file: "{{ confluent_service.value.environment_file | default(omit) }}"
+    limit_nofile: "{{ confluent_service.value.limit_nofile | default(omit) }}"
+    limit_nproc: "{{ confluent_service.value.limit_nproc | default(omit) }}"
 
   loop: "{{ services | dict2items }}"
   loop_control:
@@ -112,9 +112,9 @@
 
 - name: Systemd | Configure service
   ansible.builtin.systemd:
-    name: "{{ item.key }}"
-    state: "{{ item.value.state | default('started') }}"
-    enabled: "{{ item.value.enabled | default(true) }}"
+    name: "{{ confluent_service.key }}"
+    state: "{{ confluent_service.value.state | default('started') }}"
+    enabled: "{{ confluent_service.value.enabled | default(true) }}"
 
   loop: "{{ services | dict2items }}"
   loop_control:

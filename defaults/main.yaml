@@ -1,4 +1,6 @@
 ---
+ansible_memtotal_gb_sqrt: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
+
 confluent_services:
   - kafka
   - kafka-rest
@@ -33,10 +35,6 @@ confluent_url_format: >-
   {{ confluent_base }}/{{ confluent_version[:3] }}/
   {{ confluent_package_file_name }}
 confluent_url: "{{ confluent_url_format | replace(' ', '') }}"
-# Oracle Java necessary vars. IF you are using ansiblebit.oracle-java
-oracle_java_set_as_default: true
-oracle_java_version: 8
-
 ## Kafka Vars
 reserved_broker_max: 10000
 delete_topic_enable: "true"
@@ -78,15 +76,10 @@ kafka_file_descriptor_limit: 100000
 kafka_nproc_limit: 65536
 
 kafka_init_memory_heapsize_with_units: 1G
-
-ansible_memtotal_gb_sqrt: >-
-  {{ (ansible_memtotal_mb / 1024) | root |
-     round | int }}
-
 kafka_max_memory_heapsize_with_units: >-
-  {{ (ansible_memtotal_gb_sqrt > 1) |
+  {{ ((ansible_memtotal_gb_sqrt | int) > 1) |
      ternary((ansible_memtotal_gb_sqrt | string) + 'G',
-             kafka_init_memory_head_with_units) }}
+             kafka_init_memory_heapsize_with_units) }}
 
 ## Kafka SSL Vars
 kafka_security:
@@ -121,19 +114,19 @@ zookeeper_nproc_limit: 65536
 zookeeper_env_file: "{{ confluent_kafka_env_file_path }}/zookeeper-env.sh"
 zookeeper_init_memory_heapsize_with_units: 512M
 zookeeper_max_memory_heapsize_with_units: >-
-  {{ ((ansible_memtotal_mb/1024) | root | round | int | string ) + 'G'
-  if ((ansible_memtotal_mb/1024) | root | round | int)> 1 else '512M' }}
+  {{ ((ansible_memtotal_gb_sqrt | int) > 1) |
+     ternary((ansible_memtotal_gb_sqrt | string) + 'G',
+             zookeeper_init_memory_heapsize_with_units) }}
 
 # Zookeeper Garbage Collection Logging
 zookeeper_gc_logger_enabled: true
 zookeeper_gc_logger_name: "{{ log4j_log_dir }}/zookeeper-gc.log"
-zookeeper_gc_logger_enable_opts: "-verbose:gc -Xloggc:{{ zookeeper_gc_logger_name }}"
+zookeeper_gc_logger_enable_opts: "-verbose:gc -Xlog:gc:{{ zookeeper_gc_logger_name }}"
 zookeeper_gc_logger_number_files: 10
 zookeeper_gc_logger_max_size: 10M
 zookeeper_gc_logger_rotation_opts: >-
-  -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles={{ zookeeper_gc_logger_number_files }}
-  -XX:GCLogFileSize={{ zookeeper_gc_logger_max_size }}
-zookeeper_gc_logger_format_opts: "-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps"
+  -Xlog::::filecount={{ zookeeper_gc_logger_number_files }},filesize={{ zookeeper_gc_logger_max_size }}
+zookeeper_gc_logger_format_opts: -Xlog:gc*
 zookeeper_gc_logger_enabled_opts: >-
   {{ zookeeper_gc_logger_enable_opts }}
   {{ zookeeper_gc_logger_rotation_opts }}
