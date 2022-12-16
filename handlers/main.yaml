@@ -1,12 +1,3 @@
 ---
 - name: Handlers | Flush
   meta: flush_handlers # noqa fqcn-builtins
-
-- name: Handlers | Restart Kafka Service
-  become: yes
-  ansible.builtin.service:
-    name: kafka
-    state: "{{ item }}"
-  with_items:
-    - stopped
-    - started

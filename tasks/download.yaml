@@ -9,6 +9,10 @@
 - name: Confluent | Download package
   when: not unarchived_confluent_package.stat.exists
 
+  tags:
+    - download
+    - installation
+
   # Try to download the Confluent package on the host directly from the internet
   block:
     - name: Confluent | Download remotely
@@ -55,7 +59,3 @@
       ansible.builtin.file:
         path: "{{ destination_path }}/{{ confluent_package_file_name }}"
         state: absent
-
-  tags:
-    - download
-    - installation

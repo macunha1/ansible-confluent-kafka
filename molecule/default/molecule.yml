@@ -11,7 +11,7 @@ platforms:
   - &VAGRANT_PLATFORM
     name: debian
     box: debian/bullseye64
-    memory: 4096
+    memory: 2048
     cpus: ${VAGRANT_CPU_CORES:-2}
 
     groups:
@@ -23,7 +23,7 @@ provisioner:
   config_options:
     defaults:
       interpreter_python: auto_silent
-      callback_whitelist: profile_tasks, timer, yaml
+      callbacks_enabled: profile_tasks, timer, yaml
       ansible_pipelining: true
 
 verifier:

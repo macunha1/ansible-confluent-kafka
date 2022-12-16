@@ -66,7 +66,7 @@
     - configuration
 
 - name: Kafka | Wait until ZooKeeper ports are open
-  wait_for:
+  ansible.builtin.wait_for:
     host: >-
       {{ hostvars.get(zookeeper_host).ansible_all_ipv4_addresses | first }}
     port: "{{ zookeeper_port }}"

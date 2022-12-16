@@ -1,5 +1,6 @@
 ---
-ansible_memtotal_gb_sqrt: "{{ (ansible_memtotal_mb/1024) | root | round | int }}"
+ansible_memtotal_gb_sqrt: >-
+  {{ (ansible_memtotal_mb / 1024) | root | round | int }}
 
 confluent_services:
   - kafka

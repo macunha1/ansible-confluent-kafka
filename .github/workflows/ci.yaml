@@ -11,7 +11,7 @@ name: Continuous Integration
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     strategy:
       fail-fast: true
 
@@ -48,19 +48,36 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Python | Setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.8"
+
+      - name: Python | Enable cache for (pip) dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+          restore-keys: |
+            ${{ runner.os }}-pip
+
       - name: Test | Run Molecule
-        uses: gofrolist/molecule-action@v2.3.5
+        run: |
+          python -m pip install ansible \
+            molecule molecule-vagrant \
+            pytest testinfra
+
+          mkdir -p ~/.ansible/roles/
+          ln -s ${GITHUB_WORKSPACE} \
+            ~/.ansible/roles/macunha1.confluent_kafka
+
+          molecule test
         env:
           VAGRANT_DEFAULT_PROVIDER: libvirt
 
-      - name: Test | Cache Container Images
-        uses: satackey/action-docker-layer-caching@v0.0.11
-        # Cache failure isn't critical to the pipeline, move on
-        continue-on-error: true
-
   publish:
     if: ${{ github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     needs: test
     strategy:
       fail-fast: true
