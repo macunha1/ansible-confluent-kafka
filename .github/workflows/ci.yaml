@@ -40,7 +40,7 @@ jobs:
           ansible-lint -c .github/actions/config/ansible.yaml .
 
   test:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     needs: build
     strategy:
       fail-fast: false
@@ -48,16 +48,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Workaround
-        run: |
-          mkdir -p ${{ github.workspace }}/molecule/default/roles/macunha1.confluent_kafka
-          cp -R defaults/ handlers/ meta/ tasks/ templates/ \
-            ${{ github.workspace }}/molecule/default/roles/macunha1.confluent_kafka
-
       - name: Test | Run Molecule
-        uses: ucomesdag/molecule-action@main
-        with:
-          options: parallel
+        uses: gofrolist/molecule-action@v2.3.5
+        env:
+          VAGRANT_DEFAULT_PROVIDER: libvirt
 
       - name: Test | Cache Container Images
         uses: satackey/action-docker-layer-caching@v0.0.11
@@ -72,8 +66,6 @@ jobs:
       fail-fast: true
 
     steps:
-      # NOTE: Anchors are not supported
-      # Ref: https://github.com/macunha1/ansible-confluent-kafka/actions/runs/3304508364
       - name: Python | Enable cache for (pip) dependencies
         uses: actions/cache@v2
         with:

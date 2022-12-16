@@ -9,6 +9,11 @@ confluent_services:
 kafka_ip: "{{ ansible_all_ipv4_addresses | first }}"
 kafka_plaintext_port: 9092
 kafka_security_port: 9093
+
+kafka_rest_ip: "{{ kafka_ip }}"
+kafka_rest_port: 8082
+kafka_rest_listeners: "http://{{ kafka_rest_ip }}:{{ kafka_rest_port }}"
+
 kafka_group: "{{ groups['kafka'] | default(ansible_play_hosts) }}"
 
 kafka_system_users:
@@ -19,7 +24,15 @@ kafka_system_users:
     file_mode: "0640"
   include_to_sudoers: true
 
-dst_path: "/opt"
+python_selinux_enabled: false
+
+confluent_start_daemon_enabled: >-
+  {{ ansible_service_mgr in ['upstart', 'sysvinit'] }}
+
+systemd_service_type: >-
+  {{ confluent_start_daemon_enabled | ternary('forking', 'simple') }}
+
+destination_path: "/usr/local/share"
 local_path: "/tmp"
 log_basepath: "/var/log"
 data_basepath: "/var/data"
@@ -69,8 +82,8 @@ ssl:
 local:
   files: ../files
 
-kafka_binaries_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/bin"
-kafka_env_file: "{{ confluent_kafka_env_file_path }}/kafka-env.sh"
+kafka_binaries_dir: "{{ destination_path }}/confluent-{{ confluent_version }}/bin"
+kafka_envfile_path: "{{ confluent_envfiles_dir }}/kafka-env.sh"
 
 kafka_file_descriptor_limit: 100000
 kafka_nproc_limit: 65536
@@ -81,6 +94,8 @@ kafka_max_memory_heapsize_with_units: >-
      ternary((ansible_memtotal_gb_sqrt | string) + 'G',
              kafka_init_memory_heapsize_with_units) }}
 
+kafka_rest_enabled: true
+
 ## Kafka SSL Vars
 kafka_security:
   server:
@@ -90,18 +105,20 @@ kafka_security:
     truststore: "kafka.client.truststore.jks"
 
 ## Schema Registry Vars
-listeners_schema: "http://0.0.0.0:8081"
-kafkastore_topic: "schema-registry"
-schema_registry_debug: "false"
+schema_registry_enabled: true
+schema_registry_port: 8081
+schema_registry_listeners: "http://0.0.0.0:{{ schema_registry_port }}"
+schema_registry_kafkastore_topic: "_schemas"
+schema_registry_debug_enabled: "false"
 
 ## Zookeeper Vars
+zookeeper_port: 2181
 zookeeper_group: "{{ groups['zookeeper'] | default(ansible_play_hosts) }}"
 zookeeper_hosts: >-
   {% for server in zookeeper_group -%}
   {{ hostvars.get(server).ansible_all_ipv4_addresses | first }}:{{ zookeeper_port }}
   {% endfor %}
 
-zookeeper_port: 2181
 zookeeper_connect: "{{ zookeeper_hosts.split() | join(',') }}"
 zookeeper_data_dir: "{{ data_basepath }}/zookeeper"
 zookeeper_log_dir: "{{ data_basepath }}/logs/zookeeper"
@@ -111,7 +128,7 @@ zookeeper_sync_limit: 3
 zookeeper_connection_timeout: 6000
 zookeeper_file_descriptor_limit: 100000
 zookeeper_nproc_limit: 65536
-zookeeper_env_file: "{{ confluent_kafka_env_file_path }}/zookeeper-env.sh"
+zookeeper_envfile_path: "{{ confluent_envfiles_dir }}/zookeeper-env.sh"
 zookeeper_init_memory_heapsize_with_units: 512M
 zookeeper_max_memory_heapsize_with_units: >-
   {{ ((ansible_memtotal_gb_sqrt | int) > 1) |
@@ -133,7 +150,7 @@ zookeeper_gc_logger_enabled_opts: >-
   {{ zookeeper_gc_logger_format_opts }}
 zookeeper_gc_logger_disabled_opts: "-Dnogclog"
 ## Services
-confluent_kafka_env_file_path: "/etc/profile.d"
+confluent_envfiles_dir: "/etc/profile.d"
 
 kafka_services:
   kafka:
@@ -141,28 +158,43 @@ kafka_services:
 
     file_name: "kafka"
     user: "kafka"
+    state: started
     daemon_start: "{{ kafka_binaries_dir }}/kafka-server-start"
     daemon_stop: "{{ kafka_binaries_dir }}/kafka-server-stop"
-    daemon_status: "ps ax | grep -i 'Kafka.properties' | grep java > /dev/null"
+    daemon_status: "ps ax | grep -i 'Kafka.properties' | grep -q java"
     daemon_opts: >-
-      {% if ansible_service_mgr in ['upstart', 'sysvinit'] %} -daemon{% endif %}
+      {% if confluent_start_daemon_enabled %} -daemon{% endif %}
       {{ conf_dest }}/kafka.properties
 
-    state: "started"
     limit_nofile: "{{ kafka_file_descriptor_limit }}"
     limit_nproc: "{{ kafka_nproc_limit }}"
-    environment_file: "{{ kafka_env_file }}"
+    environment_file: "{{ kafka_envfile_path }}"
 
   kafka-rest:
-    enabled: true
+    enabled: "{{ kafka_rest_enabled }}"
 
     file_name: "kafka-rest"
     user: "kafka"
+    state: started
     daemon_start: "{{ kafka_binaries_dir }}/kafka-rest-start"
     daemon_stop: "{{ kafka_binaries_dir }}/kafka-rest-stop"
-    daemon_status: "ps ax | grep -i 'kafka-rest' | grep java > /dev/null"
-    daemon_opts: " -daemon"
-    state: "started"
+    daemon_status: "ps ax | grep -i 'kafka-rest.properties' | grep -q java"
+    daemon_opts: >-
+      {% if confluent_start_daemon_enabled %} -daemon{% endif %}
+      {{ conf_dest }}/kafka-rest.properties
+
+  schema-registry:
+    enabled: "{{ schema_registry_enabled }}"
+
+    file_name: "schema-registry"
+    user: "kafka"
+    state: started
+    daemon_start: "{{ kafka_binaries_dir }}/schema-registry-start"
+    daemon_stop: "{{ kafka_binaries_dir }}/schema-registry-stop"
+    daemon_status: "ps ax | grep -i 'schema-registry.properties' | grep -q java"
+    daemon_opts: >-
+      {% if confluent_start_daemon_enabled %} -daemon{% endif %}
+      {{ conf_dest }}/schema-registry.properties
 
 zookeeper_services:
   zookeeper:
@@ -174,13 +206,13 @@ zookeeper_services:
     daemon_stop: "{{ kafka_binaries_dir }}/zookeeper-server-stop"
     daemon_status: "ps ax | grep -i 'zookeeper.properties' | grep java > /dev/null"
     daemon_opts: >-
-      {% if ansible_service_mgr in ['upstart', 'sysvinit'] %} -daemon{% endif %}
+      {% if confluent_start_daemon_enabled %} -daemon{% endif %}
       {{ conf_dest }}/zookeeper.properties
 
-    state: "started"
+    state: started
     limit_nofile: "{{ zookeeper_file_descriptor_limit }}"
     limit_nproc: "{{ zookeeper_nproc_limit }}"
-    environment_file: "{{ zookeeper_env_file }}"
+    environment_file: "{{ zookeeper_envfile_path }}"
 
 # default_kafka_topics:
 ## Create a test topic with retention.ms set
@@ -205,7 +237,7 @@ zookeeper_services:
 #    state: absent
 
 # Log4J Vars
-log4j_log_dir: "{{ dst_path }}/confluent-{{ confluent_version }}/logs"
+log4j_log_dir: "{{ destination_path }}/confluent-{{ confluent_version }}/logs"
 
 log4j_root_logger_level: "INFO"
 log4j_stdout_class: "org.apache.log4j.ConsoleAppender"

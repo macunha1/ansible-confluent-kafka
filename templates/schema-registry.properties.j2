@@ -10,7 +10,18 @@
 #   schema-registry.properties template from Ansible
 # More information available at: https://github.com/macunha1/confluent-kafka-role
 
-listeners={{ listeners_schema }}
-kafkastore.connection.url={{ zookeeper_connect }}
-kafkastore.topic={{ kafkastore_topic }}
-debug={{ schema_registry_debug }}
+listeners={{ schema_registry_listeners }}
+
+# NOTE: Each schema-registry server is configured to be bootstrapped using its
+# "localhost" Kafka.
+#
+# Use this setting to specify the bootstrap servers for your Kafka cluster and it
+# will be used both for selecting the leader schema registry instance and for storing the data for
+# registered schemas.
+kafkastore.bootstrap.servers=PLAINTEXT://{{ kafka_ip }}:{{ kafka_plaintext_port }},SSL://{{ kafka_ip }}:{{ kafka_security_port }}
+
+# The name of the topic to store schemas in
+kafkastore.topic={{ schema_registry_kafkastore_topic }}
+
+# If true, API requests that fail will include extra debugging information, including stack traces
+debug={{ schema_registry_debug_enabled }}

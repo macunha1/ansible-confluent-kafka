@@ -1,0 +1,19 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Config file automatic generated using kafka.properties template from Ansible
+# More information available at: https://github.com/macunha1/confluent-kafka-role
+
+id=kafka-rest-{{ inventory_hostname }}
+
+listeners={{ kafka_rest_listeners }}
+schema.registry.url={{ schema_registry_listeners }}
+
+zookeeper.connect={{ zookeeper_connect }}
+zookeeper.connection.timeout.ms={{ zookeeper_connection_timeout }}
+bootstrap.servers=PLAINTEXT://{{ kafka_ip }}:{{ kafka_plaintext_port }},SSL://{{ kafka_ip }}:{{ kafka_security_port }}

@@ -19,6 +19,63 @@
     - service
     - configuration
 
+- name: Kafka Rest | Create config files
+  ansible.builtin.template:
+    src: "kafka-rest.properties.j2"
+    dest: "{{ conf_dest }}/kafka-rest.properties"
+    mode: 0644
+  when: kafka_rest_enabled
+  tags:
+    - service
+    - configuration
+
+- name: System Users | Change config file ownership
+  ansible.builtin.file:
+    path: "{{ conf_dest }}/kafka-rest.properties"
+    owner: "{{ confluent_services | first }}"
+    group: "{{ kafka_system_users.group }}"
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
+  when:
+    - kafka_system_users.enabled
+    - kafka_rest_enabled
+  tags:
+    - service
+    - configuration
+
+- name: Schema Registry | Create config files
+  ansible.builtin.template:
+    src: "schema-registry.properties.j2"
+    dest: "{{ conf_dest }}/schema-registry.properties"
+    mode: 0644
+  when: schema_registry_enabled
+  tags:
+    - service
+    - configuration
+
+- name: System Users | Change config file ownership
+  ansible.builtin.file:
+    path: "{{ conf_dest }}/schema-registry.properties"
+    owner: "{{ confluent_services | first }}"
+    group: "{{ kafka_system_users.group }}"
+    mode: "{{ kafka_system_users.permissions.directory_mode }}"
+  when:
+    - kafka_system_users.enabled
+    - schema_registry_enabled
+  tags:
+    - service
+    - configuration
+
+- name: Kafka | Wait until ZooKeeper ports are open
+  wait_for:
+    host: >-
+      {{ hostvars.get(zookeeper_host).ansible_all_ipv4_addresses | first }}
+    port: "{{ zookeeper_port }}"
+    state: started
+    timeout: 15
+  loop: "{{ zookeeper_group }}"
+  loop_control:
+    loop_var: zookeeper_host
+
 - name: "Kafka | Include tasks for {{ ansible_service_mgr }}"
   ansible.builtin.include_tasks:
     file: "{{ item }}"

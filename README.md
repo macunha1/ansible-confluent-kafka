@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="https://github.com/macunha1/ansible-confluent-kafka/actions" alt="GitHub Actions build">
-        <img src="https://img.shields.io/github/workflow/status/macunha1/ansible-confluent-kafka/Continuous%20Integration" alt="GitHub Workflow Status" >
+        <img src="https://img.shields.io/github/actions/workflow/status/macunha1/ansible-confluent-kafka/ci.yaml?branch=main" alt="GitHub Workflow Status" >
     </a>
     <a href="https://galaxy.ansible.com/macunha1/confluent_kafka" alt="Ansible Quality Score">
         <img src="https://img.shields.io/ansible/quality/53108" />
@@ -70,7 +70,6 @@ For further information on the Docker images being used to run containers on the
 - hosts: kafka,zookeeper
 
   vars:
-    dst_path: "/opt"
     local_path: "/tmp"
     confluent_version: "5.4.0"
     confluent_distribution: "confluent-community"

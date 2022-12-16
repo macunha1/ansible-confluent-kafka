@@ -1,8 +1,26 @@
 ---
 - name: Converge
   hosts: all
+  become: true
+  become_user: root
+
+  vars:
+    zookeeper_hosts: localhost:2181
 
   tasks:
-    - name: "Include macunha1.confluent_kafka"
+    - name: Deps | Install OpenJDK
+      ansible.builtin.apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Deps | Install OpenJDK
+      ansible.builtin.dnf:
+        name: java-11-openjdk
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    - name: Role | Include macunha1.confluent_kafka
       ansible.builtin.include_role:
-        name: "macunha1.confluent_kafka"
+        name: macunha1.confluent_kafka

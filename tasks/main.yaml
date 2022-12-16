@@ -5,8 +5,9 @@
   when: kafka_system_users.enabled
 
 - name: SE Linux | Install Python SE Linux lib
-  ansible.builtin.import_tasks:
+  ansible.builtin.include_tasks:
     file: python-selinux.yaml
+  when: python_selinux_enabled
 
 - name: Installation | Download Confluent package if needed
   ansible.builtin.import_tasks:

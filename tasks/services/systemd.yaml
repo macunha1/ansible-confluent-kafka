@@ -34,17 +34,17 @@
 - name: System Users | Render environment file from template
   ansible.builtin.template:
     src: "{{ item.template }}"
-    dest: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
+    dest: "{{ item.path }}"
     mode: 0755
     force: true
 
   loop:
     - template: "kafka-env.sh.j2"
-      name: "kafka-env.sh"
+      path: "{{ kafka_envfile_path }}"
       group: "{{ groups['kafka'] }}"
 
     - template: "zookeeper-env.sh.j2"
-      name: "zookeeper-env.sh"
+      path: "{{ zookeeper_envfile_path }}"
       group: "{{ groups['zookeeper'] }}"
 
   when:
@@ -53,7 +53,7 @@
 
 - name: System Users | Change environment file ownership
   ansible.builtin.file:
-    path: "{{ confluent_kafka_env_file_path }}/{{ item.name }}"
+    path: "{{ item.path }}"
     owner: "{{ item.owner }}"
     mode: "{{ kafka_system_users.permissions.directory_mode }}"
     group: "{{ kafka_system_users.group }}"
@@ -61,11 +61,11 @@
 
   loop:
     - owner: "kafka"
-      name: "kafka-env.sh"
+      path: "{{ kafka_envfile_path }}"
       group: "{{ groups['kafka'] }}"
 
     - owner: "zookeeper"
-      name: "zookeeper-env.sh"
+      path: "{{ zookeeper_envfile_path }}"
       group: "{{ groups['zookeeper'] }}"
 
   when:
@@ -83,9 +83,6 @@
   vars:
     service_name: "{{ confluent_service.key }}"
     file_name: "{{ confluent_service.value.file_name }}"
-    environment_file: "{{ confluent_service.value.environment_file | default(omit) }}"
-    limit_nofile: "{{ confluent_service.value.limit_nofile | default(omit) }}"
-    limit_nproc: "{{ confluent_service.value.limit_nproc | default(omit) }}"
 
   loop: "{{ services | dict2items }}"
   loop_control:

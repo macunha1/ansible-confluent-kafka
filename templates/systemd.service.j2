@@ -3,10 +3,7 @@ Description="{{ file_name }}"
 After=network.target
 
 [Service]
-Type=forking
-{% if environment_file is defined %}
-EnvironmentFile={{ environment_file }}
-{% endif %}
+Type={{ systemd_service_type }}
 ExecStart={{ initscripts_path }}/{{ file_name }} start
 ExecStop={{ initscripts_path }}/{{ file_name }} stop
 ExecReload=/bin/kill -HUP $MAINPID
@@ -16,11 +13,14 @@ Restart=on-failure
 RestartSec=120
 RestartPreventExitStatus=255
 StartLimitBurst=0
-{% if confluent_service.value.limit_nofile is defined %}
-LimitNOFILE={{ limit_nofile }}
+{% if confluent_service.value.environment_file is defined %}
+EnvironmentFile={{ confluent_service.value.environment_file }}
 {% endif %}
-{% if limit_nproc is defined %}
-LimitNPROC={{ limit_nproc }}
+{% if confluent_service.value.limit_nofile is defined %}
+LimitNOFILE={{ confluent_service.value.limit_nofile }}
+{% endif %}
+{% if confluent_service.value.limit_nproc is defined %}
+LimitNPROC={{ confluent_service.value.limit_nproc }}
 {% endif %}
 
 [Install]

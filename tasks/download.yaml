@@ -1,7 +1,7 @@
 ---
 - name: Confluent | Check if there's an unarchived package
   ansible.builtin.stat:
-    path: "{{ dst_path }}/confluent-{{ confluent_version }}"
+    path: "{{ destination_path }}/confluent-{{ confluent_version }}"
   register: unarchived_confluent_package
   tags:
     - installation
@@ -14,7 +14,7 @@
     - name: Confluent | Download remotely
       ansible.builtin.get_url:
         url: "{{ confluent_url }}"
-        dest: "{{ dst_path }}"
+        dest: "{{ destination_path }}"
         mode: "{{ confluent_download_file_mode }}"
         force: true
 
@@ -33,19 +33,19 @@
     - name: Confluent | Copy local package to hosts
       ansible.builtin.copy:
         src: "/tmp/{{ confluent_package_file_name }}"
-        dest: "{{ dst_path }}/{{ confluent_package_file_name }}"
+        dest: "{{ destination_path }}/{{ confluent_package_file_name }}"
         mode: "{{ confluent_download_file_mode }}"
 
   always:
     - name: Confluent | Unarchive package
       ansible.builtin.unarchive:
-        src: "{{ dst_path }}/{{ confluent_package_file_name }}"
-        dest: "{{ dst_path }}"
+        src: "{{ destination_path }}/{{ confluent_package_file_name }}"
+        dest: "{{ destination_path }}"
         remote_src: true
 
     - name: System Users | Change unarchived package ownership
       ansible.builtin.file:
-        path: "{{ dst_path }}"
+        path: "{{ destination_path }}"
         owner: "{{ confluent_services | first }}"
         group: "{{ kafka_system_users.group }}"
         mode: "{{ kafka_system_users.permissions.directory_mode }}"
@@ -53,7 +53,7 @@
 
     - name: Confluent | Remove archived package
       ansible.builtin.file:
-        path: "{{ dst_path }}/{{ confluent_package_file_name }}"
+        path: "{{ destination_path }}/{{ confluent_package_file_name }}"
         state: absent
 
   tags:

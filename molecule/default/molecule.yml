@@ -1,42 +1,41 @@
 ---
 dependency:
   name: galaxy
+
 driver:
-  name: podman
+  name: vagrant
+  provider:
+    name: ${VAGRANT_DEFAULT_PROVIDER}
 
 platforms:
-  - &DEFAULT_PLATFORM
-    name: centos
-    image: docker.io/pycontribs/centos:7
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    capabilities:
-      - SYS_ADMIN
-    command: "/usr/sbin/init"
-    pre_build_image: true
+  - &VAGRANT_PLATFORM
+    name: debian
+    box: debian/bullseye64
+    memory: 4096
+    cpus: ${VAGRANT_CPU_CORES:-2}
 
-  - <<: *DEFAULT_PLATFORM
-    name: alpine
-    image: docker.io/macunha1/ansible:java-alpine-3.16.2
-
-  - <<: *DEFAULT_PLATFORM
-    name: ubuntu
-    image: docker.io/macunha1/ansible:java-ubuntu-22.04
+    groups:
+      - zookeeper
+      - kafka
 
 provisioner:
   name: ansible
   config_options:
     defaults:
       interpreter_python: auto_silent
-      remote_tmp: /tmp/ansible
       callback_whitelist: profile_tasks, timer, yaml
       ansible_pipelining: true
 
-    ssh_connection:
-      pipelining: false
-
 verifier:
-  name: ansible
+  name: testinfra
+
+scenario:
+  test_sequence:
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - verify
+    - cleanup
+    - destroy
