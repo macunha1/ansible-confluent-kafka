@@ -83,6 +83,13 @@ jobs:
       fail-fast: true
 
     steps:
+      - uses: actions/checkout@v2
+
+      - name: Python | Setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.8"
+
       - name: Python | Enable cache for (pip) dependencies
         uses: actions/cache@v2
         with:

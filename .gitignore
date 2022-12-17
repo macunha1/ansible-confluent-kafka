@@ -1,2 +1,5 @@
 *.retry
 pass-ansible-vault
+
+__pycache__
+*.pyc
