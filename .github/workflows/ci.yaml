@@ -5,7 +5,7 @@ name: Continuous Integration
   push:
     branches: ["**"]
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * Sat"
   pull_request:
     branches: [main]
 
